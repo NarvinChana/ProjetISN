@@ -4,16 +4,20 @@ var Application = PIXI.Application,
     resources = PIXI.loader.resources;
 
 var app = new Application({
-    width: 1024,
-    height: 720,
+    width: 1280,
+    height: 800,
     antialias: true
 });
 
 document.body.appendChild(app.view);
 
-loader.add("lib/cat.png").load(draw);
-
-function draw() {
-    let cat = new Sprite(resources["lib/cat.png"].texture);
-    app.stage.addChild(cat);
+function Ship(xpos, ypos, angle, speed, velocity, hp) {
+    this.xpos = xpos;
+    this.ypos = ypos;
+    this.angle = angle;
+    this.speed = speed;
+    this.velocity = velocity;
+    this.hp = hp;
 }
+
+var playerShip = new Ship(0, 0, 0, 0, 0, 0);
