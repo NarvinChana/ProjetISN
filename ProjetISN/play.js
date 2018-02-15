@@ -4,74 +4,17 @@ var Application = PIXI.Application,
     resources = PIXI.loader.resources;
 
 var app = new Application({
-    width: 1920,
-    height: 1080,
+    width: window.innerWidth,
+    height: window.innerHeight,
     antialias: true
 });
+document.getElementById("jeu").appendChild(app.view);
 
-function resizeGame() {
-    var aspectRatio = 4 / 3;
+loader.add("lib/tilesets/09.png").load(setup);
 
-    var newWidth = window.innerWidth;
-    var newHeight = window.innerHeight;
-
-    var newaspectRatio = newWidth / newHeight;
-
-    if (newaspectRatio > aspectRatio) {
-        newWidth = newHeight * aspectRatio;
-        jeu.style.width = newWidth + 'px';
-        jeu.style.height = newHeight + 'px';
-    } else {
-        newHeight = newWidth / aspectRatio;
-        jeu.style.width = newWidth + 'px';
-        jeu.style.height = newHeight + 'px';
-    }
-    jeu.style.marginTop = (-newHeight / 2) + 'px';
-    jeu.style.marginLeft = (-newWidth / 2) + 'px';
-
-    app.width = newWidth;
-    app.height = newHeight;
+function setup(){
+	let texture = TextureCache["images/tilesets/09.png"];
+	
+	let rectangle = new PIXI.Rectangle(192,195,91,19);
 }
 
-
-
-function run() {
-    document.getElementById("jeu").appendChild(app.view);
-
-    function Ship(xpos, ypos, angle, speed, velocity, hp) {
-        this.xpos = xpos;
-        this.ypos = ypos;
-        this.angle = angle;
-        this.speed = speed;
-        this.velocity = velocity;
-        this.hp = hp;
-    }
-
-    function Projectile(xpos, ypos, angle, speed, velocity) {
-        this.xpos = xpos;
-        this.ypos = ypos;
-        this.angle = angle;
-        this.speed = speed;
-        this.velocity = velocity;
-    }
-
-    var playerShip = new Ship(0, 0, 0, 0, 0, 0);
-
-}
-
-function update() {
-
-}
-
-function draw() {
-
-}
-
-function init() {
-    resizeGame();
-}
-
-window.onload = function () {
-    init();
-    run();
-}
