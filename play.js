@@ -1,8 +1,15 @@
+//Des alias qui permettent de raccourcir le code
 var Application = PIXI.Application,
-    Sprite = PIXI.Sprite,
+    Container = PIXI.Container,
     loader = PIXI.loader,
-    resources = PIXI.loader.resources;
+    resources = PIXI.loader.resources,
+    Graphics = PIXI.Graphics,
+    TextureCache = PIXI.utils.TextureCache,
+    Sprite = PIXI.Sprite,
+    Text = PIXI.Text,
+    TextStyle = PIXI.TextStyle;
 
+//Création du canvas
 var app = new Application({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -10,27 +17,50 @@ var app = new Application({
 });
 document.getElementById("jeu").appendChild(app.view);
 
+//Chargement des images
+//Charger images du menu principal : Fond, boutons etc..
+//Charger tilesets et images du jeu : Fond, boutons, effets, animations, personnages, vaisseaux etc...
 loader
-.add("lib/tilesets/09.png")
-.load(setup);
-var cat;
-function setup(){
-	/*let texture = PIXI.utils.TextureCache["images/tilesets/09.png"];
-	
-	let rectangle = new PIXI.Rectangle(0, 0, 32, 32);
-	
-	PIXI.texture.frame = rectangle;*/
-	
-	cat = new Sprite(resources["lib/tilesets/09.png"].texture);
-	
-	cat.x = 500;
-	cat.y = 100;
-	
-	app.stage.addChild(cat);
-	
-	app.ticker.add(delta => gameLoop(delta));
+    .add("lib/tilesets/INSERTNAME.png")
+    .load(setup);
+
+//variables qui seront utilisé dans plusieurs fonctions
+var cat, state;
+
+//Initialisation des images, textures et containers
+function setup() {
+
+    cat = new Sprite(resources["lib/tilesets/INSERTNAME.png"].texture);
+
+    cat.x = 200;
+    cat.y = 100;
+
+    app.stage.addChild(cat);
+
+    state = menu;
+
+    menuScene = new Container();
+    app.stage.addChild(menuScene);
+    
+    gameScene = new Container();
+    app.stage.addChild(gameScene);
+
+    gameLoop();
 }
 
-function gameLoop(delta){
-	
+//Boucle général du jeu
+function gameLoop() {
+
+    state();
+
+    window.requestAnimationFrame(gameLoop);
+}
+
+//Tout le code du menu principal est placé ici
+function menu() {
+    
+}
+//Tout le code du jeu est placé ici
+function play() {
+    
 }
