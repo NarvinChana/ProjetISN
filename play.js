@@ -39,13 +39,18 @@ loader
 var state;
 var menuScene, gameScene;
 var play, play_button, play_hover, options, quit;
+var buttons = [],
+    buttons_texture = [];
 app.renderer.autoResize = true;
+
 //Initialisation des images, textures et containers
 function setup() {
+    
     //fond
     var bg = new Sprite(resources["lib/main menu/background.png"].texture);
     bg.width = gameWidth;
     bg.height = gameHeight;
+    
     //titre
     var title = new Sprite(resources["lib/main menu/title.png"].texture);
     title.width = gameWidth * 80 / 100;
@@ -56,6 +61,27 @@ function setup() {
     //mise en place de l'écran menu (titre + fond) dans la scène
     app.stage.addChild(bg, title);
     
+    buttons_texture[]{
+        TextureCache["lib/main menu/buttons/play.png"],
+        TextureCache["lib/main menu/buttons/play_hover.png"],
+        TextureCache["lib/main menu/buttons/options.png"],
+        TextureCache["lib/main menu/buttons/options_hover.png"],
+        TextureCache["lib/main menu/buttons/quit.png"],
+        TextureCache["lib/main menu/buttons/quit_hover.png"],
+    }
+    
+    for (var i = 0; i < 3; i++){
+        buttons[i] = new Sprite();
+        buttons[i].texture = buttons_texture[i*2];
+        buttons[i].width = gameWidth * 40 / 100;
+        buttons[i].height = gameHeight * 15 / 100;
+        buttons[i].x = 
+        buttons[i].y =
+        buttons[i].interactive = true;
+        buttons[i].on('mouseover', function(){this.texture = buttons_texture[i*2];});
+        buttons[i].on('mouseout', function(){this.texture = buttons_texture[i*2+1];});
+        
+    }
     //bouton Jouer
     play = new Sprite();
     play_button = TextureCache["lib/main menu/buttons/play.png"];
@@ -118,8 +144,3 @@ function play() {
 
 }
 
-
-function onMouseOut() {
-
-    this.texture = play_button;
-}
