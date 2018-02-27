@@ -170,6 +170,7 @@ function menu() {
     
     play.on("click", function() {
         menuScene.visible = false;
+        state = play;
     })
     options.on("click", function(){
         button_container.visible = false;
@@ -181,5 +182,5 @@ function menu() {
 }
 //Tout le code du jeu est placé ici
 function play() {
-
+    //insérer code du jeu
 }
