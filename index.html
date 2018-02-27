@@ -5,10 +5,10 @@
     <title>GAME</title>
     <style>
         #jeu {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
-            cursor: url('lib/pointer.png'), pointer;
+            cursor: url('lib/HUD/pointer.png'), auto;
         }
     </style>
 </head>
@@ -17,19 +17,10 @@
 
 <body>
 
-    <div id="wrapper">
-        <div style="position: absolute; left: 10px; top: 10px; width:200px; height:100px; background-color: yellow;">
-            <div id="jeu">
-                <script src="play.js"></script>
-            </div>
-        </div>
-        <div id="input" style="position: absolute; z-index: 1; left: 45%; top: 50%; width:100px; height:20px; background-color: pink;">
-            <form onsubmit="return false;">
-                <input type="text" id="userInput">
-                <input style="left:5%; width:75%;" type="submit" onclick="profile();" />
-            </form>
-        </div>
+    <div id="jeu">
+        <script src="play.js"></script>
     </div>
+    
 </body>
 
 </html>

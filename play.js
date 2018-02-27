@@ -21,60 +21,88 @@ var app = new Application({
 
 document.getElementById("jeu").appendChild(app.view);
 
-//Chargement des images
-//Charger images du menu principal : Fond, boutons etc..
-//Charger tilesets et images du jeu : Fond, boutons, effets, animations, personnages, vaisseaux etc...
-loader
-    .add("lib/main menu/background.png")
-    .add("lib/main menu/title.png")
-    .add("lib/main menu/buttons/play.png")
-    .add("lib/main menu/buttons/play_hover.png")
-    .add("lib/main menu/buttons/options.png")
-    .add("lib/main menu/buttons/options_hover.png")
-    .add("lib/main menu/buttons/quit.png")
-    .add("lib/main menu/buttons/quit_hover.png")
-    .load(setup);
 
 //variables qui seront utilisé dans plusieurs fonctions
 var state;
 var introScene, menuScene, gameScene;
-var button_container;
-var welcome, text;
-var bg, title;
+var buttons_texture = [];
 var play, options, quit;
-var playerName = undefined;
+var button_container;
+var welcome, text, inputField, inputText, input;
+var bg, title;
 app.renderer.autoResize = true;
-//Initialisation des images, textures et containers
-function setup() {
-    //fond
+
+
+//chargement des images de base pour affficher l'écran de chargement
+loader
+    .add("lib/main menu/background.png")
+    .add("lib/main menu/title.png")
+    .load(preloading)
+
+// fonction de "preload" ==> ecran de chargement
+function preloading(){
+
     bg = new Sprite(resources["lib/main menu/background.png"].texture);
     bg.width = gameWidth;
     bg.height = gameHeight;
+    
+    title = new Sprite(resources["lib/main menu/title.png"].texture);
+    title.width = gameWidth * 70 / 100;
+    title.height = gameHeight * 20 / 100;
+    title.x = gameWidth / 2 - title.width / 2;
+    title.y = 7 / 100 * gameHeight;
+    
+    app.stage.addChild(bg);
+    menuScene = new Container();
+    menuScene.addChild(title);
+    app.stage.addChild(menuScene);
+    
+    //lancement du chargement des ressources du jeu et des menus
+    //après le preloading 
+    load();
 
-    //intro
-    welcome = new Sprite(resources["lib/main menu/title.png"].texture);
-    welcome.width = gameWidth * 80 / 100;
-    welcome.height = gameHeight * 20 / 100;
-    welcome.x = gameWidth / 2 - welcome.width / 2;
-    welcome.y = 7 / 100 * gameHeight;
+}
+//Chargement tilesets et images du jeu : Fond, boutons, effets, animations, personnages, vaisseaux etc...
+function load(){
+loader
+    .add('play button', "lib/main menu/buttons/play.png")
+    .add('play hover button', "lib/main menu/buttons/play_hover.png")
+    .add('options button', "lib/main menu/buttons/options.png")
+    .add('options hover button', "lib/main menu/buttons/options_hover.png")
+    .add('quit button', "lib/main menu/buttons/quit.png")
+    .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
+    .on("progress", loadProgressHandler)
+    .load(setup);
+}
 
-    text = new Text('Bienvenue à Space Attack!! Veuillez rentrer un nom d\'utilisateur', {
+//état d'avancement de la barre de chargement
+function loadProgressHandler(loader, resource){
+    console.log("loading " + resource.name); 
+    console.log("progress: " + loader.progress + "%");
+    
+}
+//Initialisation des images, textures et containers
+function setup() {
+    
+    bg = new Sprite(resources["lib/main menu/background.png"].texture);
+    bg.width = gameWidth;
+    bg.height = gameHeight;
+    
+    title = new Sprite(resources["lib/main menu/title.png"].texture);
+    title.width = gameWidth * 70 / 100;
+    title.height = gameHeight * 20 / 100;
+    title.x = gameWidth / 2 - title.width / 2;
+    title.y = 7 / 100 * gameHeight;
+    
+    text = new Text('Bienvenue ! Entrez votre pseudo :'), {
         fontFamily: 'Arial',
         fontSize: 24,
         fill: 'black',
         align: 'center'
-    });
+    };
     text.position.set(gameWidth / 2 - 24 * 15, gameHeight / 2);
 
-
-    //titre
-    title = new Sprite(resources["lib/main menu/title.png"].texture);
-    title.width = gameWidth * 80 / 100;
-    title.height = gameHeight * 20 / 100;
-    title.x = gameWidth / 2 - title.width / 2;
-    title.y = 7 / 100 * gameHeight;
-
-    var buttons_texture = [
+    buttons_texture = [
         TextureCache["lib/main menu/buttons/play.png"],
         TextureCache["lib/main menu/buttons/play_hover.png"],
         TextureCache["lib/main menu/buttons/options.png"],
@@ -124,14 +152,13 @@ function setup() {
 
     app.stage.addChild(bg);
 
-    introScene = new Container();
-    introScene.addChild(welcome, text);
+    /*introScene = new Container();
+    introScene.addChild(welcome,text);
+    app.stage.addChild(inputField,input);
     app.stage.addChild(introScene);
-
-    menuScene = new Container();
-    menuScene.addChild(title, button_container);
+    */
+    menuScene.addChild(button_container);
     app.stage.addChild(menuScene);
-    menuScene.visible = false;
 
     gameScene = new Container();
     app.stage.addChild(gameScene);
@@ -149,11 +176,6 @@ function gameLoop() {
 
 //Tout le code du menu principal est placé ici
 function menu() {
-
-    if (playerName != undefined) {
-        introScene.visible = false;
-        menuScene.visible = true;
-    }
 
     play.on("click", function () {
         menuScene.visible = false;
@@ -206,10 +228,4 @@ function keyboard(keyCode) {
         "keyup", key.upHandler.bind(key), false
     );
     return key;
-}
-
-function profile() {
-    playerName = document.getElementById("userInput").value;
-    x = document.getElementById("input");
-    x.style.display = 'none';
 }
