@@ -37,20 +37,50 @@ loader
 
 //variables qui seront utilisé dans plusieurs fonctions
 var state;
-var menuScene, gameScene;
+var introScene, menuScene, gameScene;
 var buttons_texture = [];
 var play, options, quit;
 var button_container;
-
+var welcome, text, inputField, inputText, input;
+var bg, title;
 app.renderer.autoResize = true;
 //Initialisation des images, textures et containers
 function setup() {
     //fond
-    var bg = new Sprite(resources["lib/main menu/background.png"].texture);
+    bg = new Sprite(resources["lib/main menu/background.png"].texture);
     bg.width = gameWidth;
     bg.height = gameHeight;
+    /*
+    //intro
+    welcome = new Sprite(resources["lib/main menu/title.png"].texture);
+    welcome.width = gameWidth * 80 / 100;
+    welcome.height = gameHeight * 20 / 100;
+    welcome.x = gameWidth / 2 - welcome.width / 2;
+    welcome.y = 7 / 100 * gameHeight;
+    
+    text = new Text('Bienvenue à Space Attack!! Veuillez rentrer un nom d\'utilisateur' ,{fontFamily : 'Arial', fontSize: 24, fill : 'black', align : 'center'});
+    text.position.set(gameWidth/2-24*15,gameHeight/2);
+    
+    inputField = new Sprite(resources["lib/main menu/buttons/play.png"].texture);
+    inputField.interactive = true;
+    inputField.width = 300;
+    inputField.height = 300;
+    inputField.position.set(gameWidth/2,gameHeight/2);
+    
+    input = new Text(inputText,{fontFamily : 'Arial', fontSize: 24, fill : 'black', align : 'center'});
+    input.position.set(gameWidth/2,gameHeight/2);
+    
+    */
+    
+    
+    
+    
+    
+    
+    
+    
     //titre
-    var title = new Sprite(resources["lib/main menu/title.png"].texture);
+    title = new Sprite(resources["lib/main menu/title.png"].texture);
     title.width = gameWidth * 80 / 100;
     title.height = gameHeight * 20 / 100;
     title.x = gameWidth / 2 - title.width / 2;
@@ -80,6 +110,7 @@ function setup() {
         button_container.getChildAt(i).x = gameWidth / 2 - button_container.getChildAt(i).width / 2;
         button_container.getChildAt(i).y = gameHeight * 45/100 + button_container.getChildAt(i).height * i; 
         button_container.getChildAt(i).interactive = true;
+        button_container.getChildAt(i).buttonMode = true;
     }
     
     play.on('mouseover', function(){play.texture = buttons_texture[1];});
@@ -91,10 +122,16 @@ function setup() {
     quit.on('mouseover', function(){quit.texture = buttons_texture[5];});
     quit.on('mouseout', function(){quit.texture = buttons_texture[4];});
     //mise en place de l'écran menu (titre + fond) dans la scène
-    app.stage.addChild(bg, title);
     
+    app.stage.addChild(bg);
+    
+    /*introScene = new Container();
+    introScene.addChild(welcome,text);
+    app.stage.addChild(inputField,input);
+    app.stage.addChild(introScene);
+    */
     menuScene = new Container();
-    menuScene.addChild(button_container);
+    menuScene.addChild(welcome,title,button_container);
     app.stage.addChild(menuScene);
     
     gameScene = new Container();
@@ -114,11 +151,28 @@ function gameLoop() {
 
 //Tout le code du menu principal est placé ici
 function menu() {
+    /*
+    button_container.visible = false;
+    title.visible = false;
+    
+    var tempText;
+    var x = 0;
+    window.addEventListener("keypress",function(e){
+        tempText = e.keyCode;
+        x+=1;
+        if(tempText == 8){
+            x -= 2;    
+        }
+    });
+    inputText.replace(inputText.substring(x,x+1),String.fromCharCode(tempText));
+    console.log(inputText);
+    */
+    
     play.on("click", function() {
-        
+        menuScene.visible = false;
     })
     options.on("click", function(){
-        
+        button_container.visible = false;
     })
     quit.on("click", function(){
         
