@@ -28,7 +28,7 @@ var introScene, menuScene, gameScene;
 var buttons_texture = [];
 var play, options, quit;
 var button_container;
-var welcome, text, inputField, inputText, input;
+var welcome, text, inputField, inputText;
 var bg, title;
 app.renderer.autoResize = true;
 
@@ -112,7 +112,7 @@ function setup() {
     
     introScene = new Container();
     
-    var inputField = new PixiTextInput("",{
+    inputField = new PixiTextInput("",{
         fontFamily: 'ErasBoldITC',
         fontSize: 24,
         fill: 'black',
