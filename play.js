@@ -37,6 +37,9 @@ app.renderer.autoResize = true;
 loader
     .add("lib/main menu/background.png")
     .add("lib/main menu/title.png")
+    .add("lib/main menu/loadingFrame.png")
+    .add("lib/main menu/unloaded.png")
+    .add("lib/main menu/loaded.png")
     .load(preloading)
 
 // fonction de "preload" ==> ecran de chargement
@@ -52,10 +55,30 @@ function preloading(){
     title.x = gameWidth / 2 - title.width / 2;
     title.y = 7 / 100 * gameHeight;
     
-    app.stage.addChild(bg);
+    loadFrame = new Sprite(resources["lib/main menu/loadingFrame.png"].texture);
+    loadFrame.width = gameWidth * 80 / 100;
+    loadFrame.height = loadFrame.width / 7.5;
+    loadFrame.x = gameWidth / 2 - loadFrame.width / 2;                                   
+    loadFrame.y = 75 / 100 * gameHeight;
+    
+    unloaded = new Sprite(resources["lib/main menu/unloaded.png"].texture);
+    unloaded.width = gameWidth * 80 / 100;
+    unloaded.height = unloaded.width / 7.5;
+    unloaded.x = gameWidth / 2 - unloaded.width / 2;                                   
+    unloaded.y = 75 / 100 * gameHeight;
+    
+    loaded = new Sprite(resources["lib/main menu/loaded.png"].texture);
+    loaded.width = gameWidth * 80 / 100;
+    loaded.height = loaded.width / 7.5;
+    loaded.x = gameWidth / 2 - loaded.width / 2;                                   
+    loaded.y = 75 / 100 * gameHeight;                         
+    
     menuScene = new Container();
-    menuScene.addChild(title);
+    load_container = new Container();
+    load_container.addChild(loaded, unloaded, loadFrame);
+    menuScene.addChild(bg, title, load_container);
     app.stage.addChild(menuScene);
+    
     
     //lancement du chargement des ressources du jeu et des menus
     //après le preloading 
@@ -72,6 +95,7 @@ loader
     .add('quit button', "lib/main menu/buttons/quit.png")
     .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
     .on("progress", loadProgressHandler)
+    .on('complete',  function(e) {load_container.visible = false;})
     .load(setup);
 }
 
@@ -79,10 +103,11 @@ loader
 function loadProgressHandler(loader, resource){
     console.log("loading " + resource.name); 
     console.log("progress: " + loader.progress + "%");
-    
+    unloaded.width = unloaded.width - loader.progress/100  * unloaded.width;
 }
 //Initialisation des images, textures et containers
 function setup() {
+    
     
     bg = new Sprite(resources["lib/main menu/background.png"].texture);
     bg.width = gameWidth;
@@ -157,6 +182,7 @@ function setup() {
     app.stage.addChild(inputField,input);
     app.stage.addChild(introScene);
     */
+    
     menuScene.addChild(button_container);
     app.stage.addChild(menuScene);
 
