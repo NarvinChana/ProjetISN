@@ -28,7 +28,7 @@ var introScene, menuScene, gameScene;
 var buttons_texture = [];
 var play, options, quit;
 var button_container;
-var welcome, text, inputField, inputText;
+var text, inputField, profileName = "", confirm;
 var bg, title;
 app.renderer.autoResize = true;
 
@@ -73,12 +73,10 @@ function preloading(){
     loaded.x = gameWidth / 2 - loaded.width / 2;                                   
     loaded.y = 75 / 100 * gameHeight;                         
     
-    menuScene = new Container();
+    
     load_container = new Container();
     load_container.addChild(loaded, unloaded, loadFrame);
-    menuScene.addChild(bg, title, load_container);
-    app.stage.addChild(menuScene);
-    
+    app.stage.addChild(load_container,bg,title);
     
     //lancement du chargement des ressources du jeu et des menus
     //après le preloading 
@@ -94,6 +92,9 @@ loader
     .add('options hover button', "lib/main menu/buttons/options_hover.png")
     .add('quit button', "lib/main menu/buttons/quit.png")
     .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
+    .add('confirm button false', "lib/main menu/textInput/invalid.png")
+    .add('confirm button true', "lib/main menu/textInput/valid.png")
+    .add('input field', "lib/main menu/textInput/inputText.png")
     .on("progress", loadProgressHandler)
     .on('complete',  function(e) {load_container.visible = false;})
     .load(setup);
@@ -112,24 +113,38 @@ function setup() {
     
     introScene = new Container();
     
-    inputField = new PixiTextInput("",{
+    inputField = new PixiTextInput(profileName,{
         fontFamily: 'ErasBoldITC',
         fontSize: 24,
         fill: 'black',
         align: 'center'});
-    inputField.width = gameWidth * 70/100;
+    //inputField.background = false;
+    inputField.width = gameWidth * 50/100;
     inputField.height = gameHeight * 12/100;
     inputField.x = gameWidth / 2 - inputField.width / 2;
     inputField.y = gameHeight * 70/100;
-    
+    //DO THIS
     text = new Text('Bienvenue ! Entrez votre pseudo :'), {
         fontFamily: 'ErasBoldITC',
         fontSize: 40,
         fill: 'black'
     };
     text.position.set(gameWidth / 2 - 24 * 15, gameHeight / 2);
-
-    introScene.addChild(text,inputField);
+    
+    confirm = new Sprite();
+    confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
+    confirm.x = inputField.x + inputField.width;
+    confirm.y = inputField.y;
+    confirm.width = inputField.width * 10/100;
+    confirm.height = inputField.height;
+    confirm.interactive = true;
+    if (confirm.texture == TextureCache["lib/main menu/textInputs/valid.png"]){
+        confirm.on("pointerdown", function(){
+            introScene.visible = false;
+            app.stage.addChild(menuScene);
+        });
+    }
+    introScene.addChild(text,inputField,confirm);
     app.stage.addChild(introScene);
 
     buttons_texture = [
@@ -180,9 +195,9 @@ function setup() {
     });
     //mise en place de l'écran menu (titre + fond) dans la scène
 
-
+    menuScene = new Container();
     menuScene.addChild(button_container);
-
+    
     gameScene = new Container();
     app.stage.addChild(gameScene);
 
@@ -199,6 +214,12 @@ function gameLoop() {
 
 //Tout le code du menu principal est placé ici
 function menu() {
+    if (inputField.text.length < 15 && inputField.text.length > 2){
+        confirm.texture = TextureCache["lib/main menu/textInput/valid.png"];
+    }
+    else if (inputField.text.length >= 15 || inputField.text.length <= 2){
+        confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
+    }
 
     play.on("click", function () {
         menuScene.visible = false;
