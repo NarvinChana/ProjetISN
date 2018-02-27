@@ -110,24 +110,27 @@ function loadProgressHandler(loader, resource){
 //Initialisation des images, textures et containers
 function setup() {
     
+    introScene = new Container();
     
-    bg = new Sprite(resources["lib/main menu/background.png"].texture);
-    bg.width = gameWidth;
-    bg.height = gameHeight;
-    
-    title = new Sprite(resources["lib/main menu/title.png"].texture);
-    title.width = gameWidth * 70 / 100;
-    title.height = gameHeight * 20 / 100;
-    title.x = gameWidth / 2 - title.width / 2;
-    title.y = 7 / 100 * gameHeight;
-    
-    text = new Text('Bienvenue ! Entrez votre pseudo :'), {
-        fontFamily: 'Arial',
+    var inputField = new PixiTextInput("",{
+        fontFamily: 'ErasBoldITC',
         fontSize: 24,
         fill: 'black',
-        align: 'center'
+        align: 'center'});
+    inputField.width = gameWidth * 70/100;
+    inputField.height = gameHeight * 12/100;
+    inputField.x = gameWidth / 2 - inputField.width / 2;
+    inputField.y = gameHeight * 70/100;
+    
+    text = new Text('Bienvenue ! Entrez votre pseudo :'), {
+        fontFamily: 'ErasBoldITC',
+        fontSize: 40,
+        fill: 'black'
     };
     text.position.set(gameWidth / 2 - 24 * 15, gameHeight / 2);
+
+    introScene.addChild(text,inputField);
+    app.stage.addChild(introScene);
 
     buttons_texture = [
         TextureCache["lib/main menu/buttons/play.png"],
@@ -177,10 +180,8 @@ function setup() {
     });
     //mise en place de l'écran menu (titre + fond) dans la scène
 
-    app.stage.addChild(bg);
 
     menuScene.addChild(button_container);
-    app.stage.addChild(menuScene);
 
     gameScene = new Container();
     app.stage.addChild(gameScene);
