@@ -7,4 +7,4 @@ V.0.001:
 
 - Création du menu principal
 
-- Création du chargement du librairie
+- Création du chargement du library
