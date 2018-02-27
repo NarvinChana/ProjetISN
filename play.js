@@ -103,7 +103,9 @@ loader
 function loadProgressHandler(loader, resource){
     console.log("loading " + resource.name); 
     console.log("progress: " + loader.progress + "%");
-    unloaded.width = unloaded.width - loader.progress/100  * unloaded.width;
+    var a = (loader.progress/100) * unloaded.width;
+    unloaded.width = unloaded.width - a;
+    unloaded.x += a;
 }
 //Initialisation des images, textures et containers
 function setup() {
@@ -177,12 +179,6 @@ function setup() {
 
     app.stage.addChild(bg);
 
-    /*introScene = new Container();
-    introScene.addChild(welcome,text);
-    app.stage.addChild(inputField,input);
-    app.stage.addChild(introScene);
-    */
-    
     menuScene.addChild(button_container);
     app.stage.addChild(menuScene);
 
