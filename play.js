@@ -131,7 +131,7 @@ function setup() {
     app.stage.addChild(introScene);
     */
     menuScene = new Container();
-    menuScene.addChild(welcome,title,button_container);
+    menuScene.addChild(title,button_container);
     app.stage.addChild(menuScene);
     
     gameScene = new Container();
