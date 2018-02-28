@@ -27,7 +27,7 @@ var state;
 var introScene, menuScene, gameScene;
 var buttons_texture = [];
 var play, options, quit;
-var button_container;
+var button_container, showName;
 var text, inputField, profileName = "",
     confirm, validValue;
 var bg, title;
@@ -118,22 +118,22 @@ function setup() {
 
     inputField = new PixiTextInput(profileName, {
         fontFamily: 'ErasBoldITC',
-        fontSize: 24,
+        fontSize: 55,
         fill: 'black',
         align: 'center'
     });
-    //inputField.background = false;
+    inputField.texture = TextureCache["lib/main menu/textInput/inputText.png"];
     inputField.width = gameWidth * 50 / 100;
     inputField.height = gameHeight * 12 / 100;
     inputField.x = gameWidth / 2 - inputField.width / 2;
     inputField.y = gameHeight * 70 / 100;
     //DO THIS
-    text = new Text('Bienvenue ! Entrez votre pseudo :'), {
+    text = new Text('Bienvenue ! Entrez votre pseudo :', {
         fontFamily: 'ErasBoldITC',
-        fontSize: 40,
+        fontSize: 60,
         fill: 'black'
-    };
-    text.position.set(gameWidth / 2 - 24 * 15, gameHeight / 2);
+    });
+    text.position.set(gameWidth / 2 - text.width / 2, gameHeight / 2);
 
     confirm = new Sprite();
     confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
@@ -198,9 +198,18 @@ function setup() {
         quit.texture = buttons_texture[4];
     });
     //mise en place de l'écran menu (titre + fond) dans la scène
+    var showName_text = "Bienvenue, " + profileName;
+    showName = new Text(showName_text, {
+        fontFamily: 'ErasBoldITC',
+        fontSize: 40,
+        fill: 'black'
+    });
+    showName.x = gameWidth / 2 - showName.width / 2;
+    showName.y = gameHeight * 30 / 100;
+
 
     menuScene = new Container();
-    menuScene.addChild(button_container);
+    menuScene.addChild(button_container, showName);
 
     gameScene = new Container();
     app.stage.addChild(gameScene);
@@ -225,7 +234,7 @@ function menu() {
         confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
         validValue = false;
     }
-
+    showName_text = "Bienvenue, " + profileName;
     play.on("click", function () {
         menuScene.visible = false;
         title.visible = false;
