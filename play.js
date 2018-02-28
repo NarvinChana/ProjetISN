@@ -28,7 +28,8 @@ var introScene, menuScene, gameScene;
 var buttons_texture = [];
 var play, options, quit;
 var button_container;
-var text, inputField, profileName = "", confirm;
+var text, inputField, profileName = "",
+    confirm, validValue;
 var bg, title;
 app.renderer.autoResize = true;
 
@@ -43,86 +44,89 @@ loader
     .load(preloading)
 
 // fonction de "preload" ==> ecran de chargement
-function preloading(){
+function preloading() {
 
     bg = new Sprite(resources["lib/main menu/background.png"].texture);
     bg.width = gameWidth;
     bg.height = gameHeight;
-    
+
     title = new Sprite(resources["lib/main menu/title.png"].texture);
     title.width = gameWidth * 70 / 100;
     title.height = gameHeight * 20 / 100;
     title.x = gameWidth / 2 - title.width / 2;
     title.y = 7 / 100 * gameHeight;
-    
+
     loadFrame = new Sprite(resources["lib/main menu/loadingFrame.png"].texture);
     loadFrame.width = gameWidth * 80 / 100;
     loadFrame.height = loadFrame.width / 7.5;
-    loadFrame.x = gameWidth / 2 - loadFrame.width / 2;                                   
+    loadFrame.x = gameWidth / 2 - loadFrame.width / 2;
     loadFrame.y = 75 / 100 * gameHeight;
-    
+
     unloaded = new Sprite(resources["lib/main menu/unloaded.png"].texture);
     unloaded.width = gameWidth * 80 / 100;
     unloaded.height = unloaded.width / 7.5;
-    unloaded.x = gameWidth / 2 - unloaded.width / 2;                                   
+    unloaded.x = gameWidth / 2 - unloaded.width / 2;
     unloaded.y = 75 / 100 * gameHeight;
-    
+
     loaded = new Sprite(resources["lib/main menu/loaded.png"].texture);
     loaded.width = gameWidth * 80 / 100;
     loaded.height = loaded.width / 7.5;
-    loaded.x = gameWidth / 2 - loaded.width / 2;                                   
-    loaded.y = 75 / 100 * gameHeight;                         
-    
-    
+    loaded.x = gameWidth / 2 - loaded.width / 2;
+    loaded.y = 75 / 100 * gameHeight;
+
+
     load_container = new Container();
     load_container.addChild(loaded, unloaded, loadFrame);
-    app.stage.addChild(load_container,bg,title);
-    
+    app.stage.addChild(load_container, bg, title);
+
     //lancement du chargement des ressources du jeu et des menus
     //après le preloading 
     load();
 
 }
 //Chargement tilesets et images du jeu : Fond, boutons, effets, animations, personnages, vaisseaux etc...
-function load(){
-loader
-    .add('play button', "lib/main menu/buttons/play.png")
-    .add('play hover button', "lib/main menu/buttons/play_hover.png")
-    .add('options button', "lib/main menu/buttons/options.png")
-    .add('options hover button', "lib/main menu/buttons/options_hover.png")
-    .add('quit button', "lib/main menu/buttons/quit.png")
-    .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
-    .add('confirm button false', "lib/main menu/textInput/invalid.png")
-    .add('confirm button true', "lib/main menu/textInput/valid.png")
-    .add('input field', "lib/main menu/textInput/inputText.png")
-    .on("progress", loadProgressHandler)
-    .on('complete',  function(e) {load_container.visible = false;})
-    .load(setup);
+function load() {
+    loader
+        .add('play button', "lib/main menu/buttons/play.png")
+        .add('play hover button', "lib/main menu/buttons/play_hover.png")
+        .add('options button', "lib/main menu/buttons/options.png")
+        .add('options hover button', "lib/main menu/buttons/options_hover.png")
+        .add('quit button', "lib/main menu/buttons/quit.png")
+        .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
+        .add('confirm button false', "lib/main menu/textInput/invalid.png")
+        .add('confirm button true', "lib/main menu/textInput/valid.png")
+        .add('input field', "lib/main menu/textInput/inputText.png")
+        .on("progress", loadProgressHandler)
+        .on('complete', function (e) {
+            load_container.visible = false;
+        })
+        .load(setup);
 }
 
 //état d'avancement de la barre de chargement
-function loadProgressHandler(loader, resource){
-    console.log("loading " + resource.name); 
+function loadProgressHandler(loader, resource) {
+    console.log("loading " + resource.name);
     console.log("progress: " + loader.progress + "%");
-    var a = (loader.progress/100) * unloaded.width;
+    var a = (loader.progress / 100) * unloaded.width;
     unloaded.width = unloaded.width - a;
     unloaded.x += a;
 }
 //Initialisation des images, textures et containers
 function setup() {
-    
+
     introScene = new Container();
-    
-    inputField = new PixiTextInput(profileName,{
+
+    inputField = new PixiTextInput(profileName, {
         fontFamily: 'ErasBoldITC',
         fontSize: 24,
         fill: 'black',
-        align: 'center'});
+        align: 'center'
+    });
     //inputField.background = false;
-    inputField.width = gameWidth * 50/100;
-    inputField.height = gameHeight * 12/100;
+    inputField.width = gameWidth * 50 / 100;
+    inputField.height = gameHeight * 12 / 100;
     inputField.x = gameWidth / 2 - inputField.width / 2;
-    inputField.y = gameHeight * 70/100;
+    inputField.y = gameHeight * 70 / 100;
     //DO THIS
     text = new Text('Bienvenue ! Entrez votre pseudo :'), {
         fontFamily: 'ErasBoldITC',
@@ -130,21 +134,21 @@ function setup() {
         fill: 'black'
     };
     text.position.set(gameWidth / 2 - 24 * 15, gameHeight / 2);
-    
+
     confirm = new Sprite();
     confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
     confirm.x = inputField.x + inputField.width;
     confirm.y = inputField.y;
-    confirm.width = inputField.width * 10/100;
+    confirm.width = inputField.width * 10 / 100;
     confirm.height = inputField.height;
     confirm.interactive = true;
-    if (confirm.texture == TextureCache["lib/main menu/textInputs/valid.png"]){
-        confirm.on("pointerdown", function(){
+    confirm.on("pointerdown", function () {
+        if (validValue == true) {
             introScene.visible = false;
             app.stage.addChild(menuScene);
-        });
-    }
-    introScene.addChild(text,inputField,confirm);
+        }
+    });
+    introScene.addChild(text, inputField, confirm);
     app.stage.addChild(introScene);
 
     buttons_texture = [
@@ -197,7 +201,7 @@ function setup() {
 
     menuScene = new Container();
     menuScene.addChild(button_container);
-    
+
     gameScene = new Container();
     app.stage.addChild(gameScene);
 
@@ -214,15 +218,17 @@ function gameLoop() {
 
 //Tout le code du menu principal est placé ici
 function menu() {
-    if (inputField.text.length < 15 && inputField.text.length > 2){
+    if (inputField.text.length < 15 && inputField.text.length > 2) {
         confirm.texture = TextureCache["lib/main menu/textInput/valid.png"];
-    }
-    else if (inputField.text.length >= 15 || inputField.text.length <= 2){
+        validValue = true;
+    } else if (inputField.text.length >= 15 || inputField.text.length <= 2) {
         confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
+        validValue = false;
     }
 
     play.on("click", function () {
         menuScene.visible = false;
+        title.visible = false;
         state = play;
     })
     options.on("click", function () {
