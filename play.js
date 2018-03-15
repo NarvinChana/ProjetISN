@@ -74,7 +74,6 @@ function preloading() {
     loaded.x = gameWidth / 2 - loaded.width / 2;
     loaded.y = 75 / 100 * gameHeight;
 
-
     load_container = new Container();
     load_container.addChild(loaded, unloaded, loadFrame);
     app.stage.addChild(load_container, bg, title);
@@ -95,7 +94,7 @@ function load() {
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
         .add('confirm button false', "lib/main menu/textInput/invalid.png")
         .add('confirm button true', "lib/main menu/textInput/valid.png")
-        .add('input field', "lib/main menu/textInput/inputText.png")
+        //.add('input field', "lib/main menu/textInput/inputText.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -116,18 +115,13 @@ function setup() {
 
     introScene = new Container();
 
-    inputField = new PixiTextInput(profileName, {
-        fontFamily: 'ErasBoldITC',
-        fontSize: 55,
-        fill: 'black',
-        align: 'center'
-    });
-    inputField.texture = TextureCache["lib/main menu/textInput/inputText.png"];
-    inputField.width = gameWidth * 50 / 100;
-    inputField.height = gameHeight * 12 / 100;
-    inputField.x = gameWidth / 2 - inputField.width / 2;
-    inputField.y = gameHeight * 70 / 100;
-    //DO THIS
+	inputField = new Sprite();
+	
+    document.getElementById("inputbox").style.width = gameWidth * 50 / 100;
+    document.getElementById("inputbox").style.height = gameHeight * 12 / 100;
+    document.getElementById("inputbox").style.left = gameWidth / 2 - gameWidth * 50 / 100 / 2;
+    document.getElementById("inputbox").style.top = gameHeight * 70 / 100;
+    
     text = new Text('Bienvenue ! Entrez votre pseudo :', {
         fontFamily: 'ErasBoldITC',
         fontSize: 60,
@@ -139,7 +133,7 @@ function setup() {
     confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
     confirm.x = inputField.x + inputField.width;
     confirm.y = inputField.y;
-    confirm.width = inputField.width * 10 / 100;
+    confirm.width = inputField.width * 15 / 100;
     confirm.height = inputField.height;
     confirm.interactive = true;
     confirm.on("pointerdown", function () {
@@ -148,7 +142,7 @@ function setup() {
             app.stage.addChild(menuScene);
         }
     });
-    introScene.addChild(text, inputField, confirm);
+    introScene.addChild(text, confirm);
     app.stage.addChild(introScene);
 
     buttons_texture = [
@@ -227,10 +221,10 @@ function gameLoop() {
 
 //Tout le code du menu principal est placé ici
 function menu() {
-    if (inputField.text.length < 15 && inputField.text.length > 2) {
+    if (profileName.length < 15 && profileName.length > 2) {
         confirm.texture = TextureCache["lib/main menu/textInput/valid.png"];
         validValue = true;
-    } else if (inputField.text.length >= 15 || inputField.text.length <= 2) {
+    } else if (profileName.length >= 15 || profileName.length <= 2) {
         confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
         validValue = false;
     }
@@ -241,10 +235,11 @@ function menu() {
         state = play;
     })
     options.on("click", function () {
-        button_container.visible = false;
+		title.visible = false;
+		menuScene.visible = false;
     })
     quit.on("click", function () {
-        window.location.reload;
+        location.reload();
     })
 }
 //Tout le code du jeu est placé ici

@@ -10,9 +10,16 @@
             left: 0;
             cursor: url('lib/HUD/pointer.png'), auto;
         }
-
+		
+		#textbox {
+			position: absolute;
+			top:0;
+			src : url("lib/main menu/textInput/inputText.png");
+		}
+		
         @font-face {
-            font-family: "ErasBoldITC" url("lib/fonts/ErasBoldITC.ttf");
+            font-family: "ErasBoldITC"; 
+			src : url("lib/fonts/ErasBoldITC.ttf");
         }
     </style>
 </head>
@@ -24,6 +31,9 @@
 
     <div id="jeu">
         <script src="play.js"></script>
+		<div id="textbox">
+			<input type="text" id="inputbox" name="pname" min="4" max="15">
+		</div>
     </div>
 
 </body>
