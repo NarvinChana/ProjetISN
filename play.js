@@ -244,7 +244,7 @@ function menu() {
         button_container.visible = false;
     })
     quit.on("click", function () {
-
+        window.location.reload;
     })
 }
 //Tout le code du jeu est placé ici
