@@ -28,9 +28,9 @@ var introScene, menuScene, gameScene;
 var buttons_texture = [];
 var play, options, quit;
 var button_container, showName;
-var text, inputField, profileName = "",
-    confirm, validValue;
+var text, profileName = "", validValue;
 var bg, title;
+var enter = keyboard(15);
 app.renderer.autoResize = true;
 
 
@@ -92,9 +92,6 @@ function load() {
         .add('options hover button', "lib/main menu/buttons/options_hover.png")
         .add('quit button', "lib/main menu/buttons/quit.png")
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
-        .add('confirm button false', "lib/main menu/textInput/invalid.png")
-        .add('confirm button true', "lib/main menu/textInput/valid.png")
-        //.add('input field', "lib/main menu/textInput/inputText.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -114,13 +111,6 @@ function loadProgressHandler(loader, resource) {
 function setup() {
 
     introScene = new Container();
-
-	inputField = new Sprite();
-	
-    document.getElementById("inputbox").style.width = gameWidth * 50 / 100;
-    document.getElementById("inputbox").style.height = gameHeight * 12 / 100;
-    document.getElementById("inputbox").style.left = gameWidth / 2 - gameWidth * 50 / 100 / 2;
-    document.getElementById("inputbox").style.top = gameHeight * 70 / 100;
     
     text = new Text('Bienvenue ! Entrez votre pseudo :', {
         fontFamily: 'PixelOperator',
@@ -129,22 +119,9 @@ function setup() {
     });
     text.position.set(gameWidth / 2 - text.width / 2, gameHeight / 2);
 
-    confirm = new Sprite();
-    confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
-    confirm.x = inputField.x + inputField.width;
-    confirm.y = inputField.y;
-    confirm.width = inputField.width * 15 / 100;
-    confirm.height = inputField.height;
-    confirm.interactive = true;
-    confirm.on("pointerdown", function () {
-        if (validValue == true) {
-            introScene.visible = false;
-            app.stage.addChild(menuScene);
-        }
-    });
-    introScene.addChild(text, confirm);
-    app.stage.addChild(introScene);
-
+    introScene.addChild(text);
+    app.stage.addChild(introScene);  
+	
     buttons_texture = [
         TextureCache["lib/main menu/buttons/play.png"],
         TextureCache["lib/main menu/buttons/play_hover.png"],
@@ -194,7 +171,7 @@ function setup() {
     //mise en place de l'écran menu (titre + fond) dans la scène
     var showName_text = "Bienvenue, " + profileName;
     showName = new Text(showName_text, {
-        fontFamily: 'ErasBoldITC',
+        fontFamily: 'PixelOperator',
         fontSize: 40,
         fill: 'black'
     });
@@ -206,8 +183,12 @@ function setup() {
     menuScene.addChild(button_container, showName);
 
     gameScene = new Container();
-    app.stage.addChild(gameScene);
-
+	
+    app.stage.addChild(menuScene, gameScene);
+	
+	menuScene.visible = false;
+	gameScene.visible = false;
+	
     state = menu;
 
     gameLoop();
@@ -221,13 +202,13 @@ function gameLoop() {
 
 //Tout le code du menu principal est placé ici
 function menu() {
-    if (profileName.length < 15 && profileName.length > 2) {
-        confirm.texture = TextureCache["lib/main menu/textInput/valid.png"];
-        validValue = true;
-    } else if (profileName.length >= 15 || profileName.length <= 2) {
-        confirm.texture = TextureCache["lib/main menu/textInput/invalid.png"];
-        validValue = false;
-    }
+	profileName = document.getElementById("inputbox").value;	
+	enter.press = () => {
+		if (profileName.length < 15 && profileName.length > 2) {
+			introScene.visible = false
+			menuScene.visible = true;
+		}
+	};
     showName_text = "Bienvenue, " + profileName;
     play.on("click", function () {
         menuScene.visible = false;
