@@ -123,7 +123,7 @@ function setup() {
     document.getElementById("inputbox").style.top = gameHeight * 70 / 100;
     
     text = new Text('Bienvenue ! Entrez votre pseudo :', {
-        fontFamily: 'ErasBoldITC',
+        fontFamily: 'PixelOperator',
         fontSize: 60,
         fill: 'black'
     });
