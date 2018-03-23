@@ -30,7 +30,6 @@ var play, options, quit;
 var button_container, showName;
 var text, profileName = "", validValue;
 var bg, title;
-var enter = keyboard(15);
 app.renderer.autoResize = true;
 
 
@@ -169,16 +168,6 @@ function setup() {
         quit.texture = buttons_texture[4];
     });
     //mise en place de l'écran menu (titre + fond) dans la scène
-    var showName_text = "Bienvenue, " + profileName;
-    showName = new Text(showName_text, {
-        fontFamily: 'PixelOperator',
-        fontSize: 40,
-        fill: 'black'
-    });
-    showName.x = gameWidth / 2 - showName.width / 2;
-    showName.y = gameHeight * 30 / 100;
-
-
     menuScene = new Container();
     menuScene.addChild(button_container, showName);
 
@@ -202,14 +191,27 @@ function gameLoop() {
 
 //Tout le code du menu principal est placé ici
 function menu() {
-	profileName = document.getElementById("inputbox").value;	
-	enter.press = () => {
-		if (profileName.length < 15 && profileName.length > 2) {
-			introScene.visible = false
-			menuScene.visible = true;
-		}
-	};
-    showName_text = "Bienvenue, " + profileName;
+	profileName = document.getElementById('inputbox').value;
+	//on ajoute un un listener de touche à l'inputbox
+	document.getElementById("inputbox").addEventListener("keyup", function(event) {
+    event.preventDefault();
+	//si la touche entrée + les conditions sont réunis alors on accede au menu
+    if (event.keyCode === 13 && profileName.length < 15 && profileName.length > 2) {
+        introScene.visible = false
+		menuScene.visible = true;
+		//mise en transparence de l'inputbox
+		document.getElementById('inputbox').style.opacity = 0;
+		console.log(profileName);
+    }
+});	
+	let text0 = new PIXI.Text("Bienvenue, " + profileName,{
+		fontFamily : 'PixelOperator',
+		fontSize: 50,
+		fill : 0x000000,
+		});
+	text0.x = gameWidth/2 -text0.width/2 ;
+	text0.y = gameHeight/3;
+	menuScene.addChild(text0);	
     play.on("click", function () {
         menuScene.visible = false;
         title.visible = false;
