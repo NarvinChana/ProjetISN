@@ -168,6 +168,16 @@ function setup() {
         quit.texture = buttons_texture[4];
     });
     //mise en place de l'écran menu (titre + fond) dans la scène
+    var showName_text = "Bienvenue, " + profileName;
+    showName = new Text(showName_text, {
+        fontFamily: 'PixelOperator',
+        fontSize: 40,
+        fill: 'black'
+    });
+    showName.x = gameWidth / 2 - showName.width / 2;
+    showName.y = gameHeight * 30 / 100;
+
+
     menuScene = new Container();
     menuScene.addChild(button_container, showName);
 
@@ -204,6 +214,7 @@ function menu() {
 		console.log(profileName);
     }
 });	
+   // showName_text = "Bienvenue, " + profileName;
 	let text0 = new PIXI.Text("Bienvenue, " + profileName,{
 		fontFamily : 'PixelOperator',
 		fontSize: 50,
