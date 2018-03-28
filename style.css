@@ -8,7 +8,7 @@
 			position: absolute;
 			top:0;
 			left:0;
-			margin: 50% 25%;
+			margin: 33% 33%;
 			src : url("lib/main menu/textInput/inputText.png");
 		}
 input[type="text"]{
@@ -26,4 +26,12 @@ input[type="text"]{
 @font-face {
             font-family: 'PixelOperator'; 
 			src : url('lib/fonts/PixelOperator.ttf');
+        }
+@font-face {
+            font-family: 'PixelOperator-Bold'; 
+			src : url('lib/fonts/PixelOperator-Bold.ttf');
+        }
+@font-face {
+            font-family: 'PixelOperator8-Bold'; 
+			src : url('lib/fonts/PixelOperator8-Bold.ttf');
         }

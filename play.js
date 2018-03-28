@@ -28,10 +28,9 @@ var introScene, menuScene, gameScene;
 var buttons_texture = [];
 var play, options, quit;
 var button_container, showName;
-var text, profileName = "", validValue;
+var text, profileName = " ", validValue;
 var bg, title;
 app.renderer.autoResize = true;
-
 
 //chargement des images de base pour affficher l'écran de chargement
 loader
@@ -77,6 +76,7 @@ function preloading() {
     load_container.addChild(loaded, unloaded, loadFrame);
     app.stage.addChild(load_container, bg, title);
 
+	
     //lancement du chargement des ressources du jeu et des menus
     //après le preloading 
     load();
@@ -117,7 +117,6 @@ function setup() {
         fill: 'black'
     });
     text.position.set(gameWidth / 2 - text.width / 2, gameHeight / 2);
-
     introScene.addChild(text);
     app.stage.addChild(introScene);  
 	
@@ -168,14 +167,13 @@ function setup() {
         quit.texture = buttons_texture[4];
     });
     //mise en place de l'écran menu (titre + fond) dans la scène
-    var showName_text = "Bienvenue, " + profileName;
-    showName = new Text(showName_text, {
+		
+    showName = new Text(profileName, {
         fontFamily: 'PixelOperator',
-        fontSize: 40,
+        fontSize: 60,
         fill: 'black'
     });
-    showName.x = gameWidth / 2 - showName.width / 2;
-    showName.y = gameHeight * 30 / 100;
+    showName.y = gameHeight * 33 / 100;
 
 
     menuScene = new Container();
@@ -204,25 +202,17 @@ function menu() {
 	profileName = document.getElementById('inputbox').value;
 	//on ajoute un un listener de touche à l'inputbox
 	document.getElementById("inputbox").addEventListener("keyup", function(event) {
-    event.preventDefault();
-	//si la touche entrée + les conditions sont réunis alors on accede au menu
-    if (event.keyCode === 13 && profileName.length < 15 && profileName.length > 2) {
+		event.preventDefault();
+		//si la touche entrée + les conditions sont réunis alors on accede au menu
+		if (event.keyCode === 13 && profileName.length < 15 && profileName.length > 2) {
         introScene.visible = false
 		menuScene.visible = true;
-		//mise en transparence de l'inputbox
-		document.getElementById('inputbox').style.opacity = 0;
-		console.log(profileName);
+		showName.text = "Bienvenue, " + profileName;
+		document.getElementById('inputbox').parentNode.removeChild(document.getElementById('inputbox'));
+		showName.x = gameWidth / 2 - showName.width / 2;
     }
 });	
-   // showName_text = "Bienvenue, " + profileName;
-	let text0 = new PIXI.Text("Bienvenue, " + profileName,{
-		fontFamily : 'PixelOperator',
-		fontSize: 50,
-		fill : 0x000000,
-		});
-	text0.x = gameWidth/2 -text0.width/2 ;
-	text0.y = gameHeight/3;
-	menuScene.addChild(text0);	
+ 
     play.on("click", function () {
         menuScene.visible = false;
         title.visible = false;
