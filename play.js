@@ -26,10 +26,11 @@ document.getElementById("jeu").appendChild(app.view);
 var state;
 var introScene, menuScene, gameScene;
 var buttons_texture = [];
-var play, options, quit;
+var play, play_button, options_button, quit_button;
 var button_container, showName;
 var text, profileName = " ", validValue;
 var bg, title;
+var ship, shipVel = 0;
 app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
@@ -91,6 +92,7 @@ function load() {
         .add('options hover button', "lib/main menu/buttons/options_hover.png")
         .add('quit button', "lib/main menu/buttons/quit.png")
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
+		.add('enemy ship', "lib/vaisseau/vaisseau_enemy.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -116,7 +118,7 @@ function setup() {
         fontSize: 60,
         fill: 'black'
     });
-    text.position.set(gameWidth / 2 - text.width / 2, gameHeight / 2);
+    text.position.set(gameWidth / 2 - text.width / 2, gameHeight *33/100);
     introScene.addChild(text);
     app.stage.addChild(introScene);  
 	
@@ -131,11 +133,11 @@ function setup() {
 
     button_container = new Container();
 
-    play = new Sprite();
-    options = new Sprite();
-    quit = new Sprite;
+    play_button = new Sprite();
+    options_button = new Sprite();
+    quit_button = new Sprite;
 
-    button_container.addChild(play, options, quit);
+    button_container.addChild(play_button, options_button, quit_button);
 
     for (var i = 0; i < 3; i++) {
         button_container.getChildAt(i).texture = buttons_texture[i * 2];
@@ -146,25 +148,25 @@ function setup() {
         button_container.getChildAt(i).interactive = true;
     }
 
-    play.on('mouseover', function () {
-        play.texture = buttons_texture[1];
+    play_button.on('mouseover', function () {
+        play_button.texture = buttons_texture[1];
     });
-    play.on('mouseout', function () {
-        play.texture = buttons_texture[0];
-    });
-
-    options.on('mouseover', function () {
-        options.texture = buttons_texture[3];
-    });
-    options.on('mouseout', function () {
-        options.texture = buttons_texture[2];
+    play_button.on('mouseout', function () {
+        play_button.texture = buttons_texture[0];
     });
 
-    quit.on('mouseover', function () {
-        quit.texture = buttons_texture[5];
+    options_button.on('mouseover', function () {
+        options_button.texture = buttons_texture[3];
     });
-    quit.on('mouseout', function () {
-        quit.texture = buttons_texture[4];
+    options_button.on('mouseout', function () {
+        options_button.texture = buttons_texture[2];
+    });
+
+    quit_button.on('mouseover', function () {
+        quit_button.texture = buttons_texture[5];
+    });
+    quit_button.on('mouseout', function () {
+        quit_button.texture = buttons_texture[4];
     });
     //mise en place de l'écran menu (titre + fond) dans la scène
 		
@@ -178,29 +180,26 @@ function setup() {
 
     menuScene = new Container();
     menuScene.addChild(button_container, showName);
-
-    gameScene = new Container();
 	
+	ship = new Sprite();
+	ship.texture = TextureCache['enemy ship'];
+	window.addEventListener("keydown", function (e){
+		e.preventDefault();
+		if(e.keyCode === 38) {
+			shipVel += 1;
+		}
+	});
+    gameScene = new Container();
+	gameScene.addChild(ship);
     app.stage.addChild(menuScene, gameScene);
 	
 	menuScene.visible = false;
 	gameScene.visible = false;
 	
-    state = menu;
+    state = "menu";
 
     gameLoop();
-}
-
-//Boucle général du jeu
-function gameLoop() {
-    state();
-    window.requestAnimationFrame(gameLoop);
-}
-
-//Tout le code du menu principal est placé ici
-function menu() {
-	profileName = document.getElementById('inputbox').value;
-	//on ajoute un un listener de touche à l'inputbox
+	
 	document.getElementById("inputbox").addEventListener("keyup", function(event) {
 		event.preventDefault();
 		//si la touche entrée + les conditions sont réunis alors on accede au menu
@@ -210,25 +209,66 @@ function menu() {
 		showName.text = "Bienvenue, " + profileName;
 		document.getElementById('inputbox').parentNode.removeChild(document.getElementById('inputbox'));
 		showName.x = gameWidth / 2 - showName.width / 2;
-    }
-});	
+		}
+	});
+}
+//Boucle général du jeu
+function gameLoop() {
+    switch(state){
+		case "menu" : 
+		menu();
+		break;
+		case "play" : 
+		play();
+		break;
+	}
+    window.requestAnimationFrame(gameLoop);
+}
+
+//Tout le code du menu principal est placé ici
+function menu() {
+	if (profileName === " "){
+		profileName = document.getElementById('inputbox').value;
+	//on ajoute un un listener de touche à l'inputbox
+	}	
  
-    play.on("click", function () {
+    play_button.on("click", function () {
         menuScene.visible = false;
         title.visible = false;
-        state = play;
+		gameScene.visible = true;
+        state = "play";
     })
-    options.on("click", function () {
+    options_button.on("click", function () {
 		title.visible = false;
 		menuScene.visible = false;
     })
-    quit.on("click", function () {
+    quit_button.on("click", function () {
         location.reload();
     })
 }
 //Tout le code du jeu est placé ici
 function play() {
     //insérer code du jeu
+	ship.scale.set(0.22,0.22);
+	ship.x = gameWidth/2 - ship.width/2;
+	ship.y = gameHeight/2 - ship.height/2;
+	ship.anchor.x = 0.5;
+	ship.anchor.y = 0.5;
+	playerMovement();
+}
+
+function playerMovement() {
+	console.log(shipVel);
+	ship.x += shipVel*2;
+	ship.y += shipVel*2;
+	if (shipVel<5) {
+		shipVel += 0.25;
+	}
+	
+}
+
+function calcAngle(x,y,a,vel) {
+	
 }
 
 function keyboard(keyCode) {
