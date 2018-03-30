@@ -328,3 +328,5 @@ function keyboard(keyCode) {
     );
     return key;
 }
+
+//http://www.zekechan.net/asteroids-html5-game-tutorial-1/
