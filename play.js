@@ -30,7 +30,7 @@ var play, play_button, options_button, quit_button;
 var button_container, showName;
 var text, profileName = " ", validValue;
 var bg, title;
-var ship, shipVel = 0;
+var ship;
 app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
@@ -183,12 +183,37 @@ function setup() {
 	
 	ship = new Sprite();
 	ship.texture = TextureCache['enemy ship'];
+	
+	ship.scale.set(0.22,0.22);
+	ship.x = gameWidth/2 - ship.width/2;
+	ship.y = gameHeight/2 - ship.height/2;
+	ship.vx = 0;
+	ship.vy = 0;
+	ship.anchor.x = 0.5;
+	ship.anchor.y = 0.5;
+	
 	window.addEventListener("keydown", function (e){
 		e.preventDefault();
-		if(e.keyCode === 38) {
-			shipVel += 1;
+		switch(e.keyCode){
+		//tourner à droite / à gauche
+			case 37:
+				
+			break;
+			
+			case 39:
+				
+			break;
+		//avancer / reculer
+			case 38:
+				
+			break;
+			
+			case 40:
+				
+			break;
 		}
 	});
+	
     gameScene = new Container();
 	gameScene.addChild(ship);
     app.stage.addChild(menuScene, gameScene);
@@ -197,19 +222,19 @@ function setup() {
 	gameScene.visible = false;
 	
     state = "menu";
-
-    gameLoop();
+	
+	gameLoop();
 	
 	document.getElementById("inputbox").addEventListener("keyup", function(event) {
 		event.preventDefault();
 		//si la touche entrée + les conditions sont réunis alors on accede au menu
-		if (event.keyCode === 13 && profileName.length < 15 && profileName.length > 2) {
-        introScene.visible = false
-		menuScene.visible = true;
-		showName.text = "Bienvenue, " + profileName;
-		document.getElementById('inputbox').parentNode.removeChild(document.getElementById('inputbox'));
-		showName.x = gameWidth / 2 - showName.width / 2;
-		}
+			if (event.keyCode === 13 && profileName.length < 15 && profileName.length > 2) {
+			introScene.visible = false;
+			menuScene.visible = true;
+			showName.text = "Bienvenue, " + profileName;
+			document.getElementById('inputbox').parentNode.removeChild(document.getElementById('inputbox'));
+			showName.x = gameWidth / 2 - showName.width / 2;
+			}
 	});
 }
 //Boucle général du jeu
@@ -227,16 +252,17 @@ function gameLoop() {
 
 //Tout le code du menu principal est placé ici
 function menu() {
-	if (profileName === " "){
+	
+	if (document.getElementById('inputbox') != null ){
 		profileName = document.getElementById('inputbox').value;
-	//on ajoute un un listener de touche à l'inputbox
-	}	
+	}
  
     play_button.on("click", function () {
         menuScene.visible = false;
         title.visible = false;
 		gameScene.visible = true;
-        state = "play";
+		state = "play";
+        
     })
     options_button.on("click", function () {
 		title.visible = false;
@@ -245,25 +271,20 @@ function menu() {
     quit_button.on("click", function () {
         location.reload();
     })
+
 }
 //Tout le code du jeu est placé ici
 function play() {
     //insérer code du jeu
-	ship.scale.set(0.22,0.22);
-	ship.x = gameWidth/2 - ship.width/2;
-	ship.y = gameHeight/2 - ship.height/2;
-	ship.anchor.x = 0.5;
-	ship.anchor.y = 0.5;
 	playerMovement();
+	
+	
 }
 
 function playerMovement() {
-	console.log(shipVel);
-	ship.x += shipVel*2;
-	ship.y += shipVel*2;
-	if (shipVel<5) {
-		shipVel += 0.25;
-	}
+	
+	ship.x += ship.vx;
+	ship.y += ship.vy;
 	
 }
 
