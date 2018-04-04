@@ -30,7 +30,7 @@ var play, play_button, options_button, quit_button;
 var button_container, showName;
 var text, profileName = " ", validValue;
 var bg, title;
-var ship;
+var ship, shipVector;
 app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
@@ -192,27 +192,6 @@ function setup() {
 	ship.anchor.x = 0.5;
 	ship.anchor.y = 0.5;
 	
-	window.addEventListener("keydown", function (e){
-		e.preventDefault();
-		switch(e.keyCode){
-		//tourner à droite / à gauche
-			case 37:
-				
-			break;
-			
-			case 39:
-				
-			break;
-		//avancer / reculer
-			case 38:
-				
-			break;
-			
-			case 40:
-				
-			break;
-		}
-	});
 	
     gameScene = new Container();
 	gameScene.addChild(ship);
@@ -275,6 +254,31 @@ function menu() {
 }
 //Tout le code du jeu est placé ici
 function play() {
+	console.log(ship.rotation)
+	window.addEventListener("keydown", function (e){
+		e.preventDefault();
+		switch(e.keyCode){
+		//tourner à droite / à gauche
+			case 37:
+				ship.rotation += 0.01;
+			break;
+				
+			case 39:
+				ship.rotation -= 0.01;
+			break;
+		//avancer / reculer
+			case 38:
+				ship.x = ship.x + 0.01 * Math.sin(ship.rotation);
+				ship.y = ship.y + 0.01 * Math.cos(ship.rotation);
+			break;
+			
+			case 40:
+				ship.x = (ship.x - 0.01 * Math.cos(ship.rotation));
+				ship.y = (ship.y - 0.01 * Math.sin(ship.rotation));
+			break;
+		}
+	});
+	
     //insérer code du jeu
 	playerMovement();
 	
@@ -283,8 +287,6 @@ function play() {
 
 function playerMovement() {
 	
-	ship.x += ship.vx;
-	ship.y += ship.vy;
 	
 }
 
