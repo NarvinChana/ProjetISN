@@ -252,8 +252,9 @@ function initPlay() {
 	rotateScaling = 0.01;
 	
 	accelValue = 0;
-	accelMax,accelMin;
-	speedValue;
+	accelMax = -2;
+	accelMin = 2;
+	speedValue = 0;
 	
 	ship.scale.set(0.22,0.22);
 	ship.x = gameWidth/2 - ship.width/2;
