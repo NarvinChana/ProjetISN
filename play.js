@@ -30,7 +30,7 @@ var play, play_button, options_button, quit_button;
 var button_container, showName;
 var text, profileName = " ", validValue;
 var bg, title;
-var ship, shipVector;
+var ship;
 app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
@@ -184,15 +184,6 @@ function setup() {
 	ship = new Sprite();
 	ship.texture = TextureCache['enemy ship'];
 	
-	ship.scale.set(0.22,0.22);
-	ship.x = gameWidth/2 - ship.width/2;
-	ship.y = gameHeight/2 - ship.height/2;
-	ship.vx = 0;
-	ship.vy = 0;
-	ship.anchor.x = 0.5;
-	ship.anchor.y = 0.5;
-	
-	
     gameScene = new Container();
 	gameScene.addChild(ship);
     app.stage.addChild(menuScene, gameScene);
@@ -240,8 +231,8 @@ function menu() {
         menuScene.visible = false;
         title.visible = false;
 		gameScene.visible = true;
+		initPlay();
 		state = "play";
-        
     })
     options_button.on("click", function () {
 		title.visible = false;
@@ -252,83 +243,83 @@ function menu() {
     })
 
 }
-//Tout le code du jeu est placé ici
-function play() {
-	console.log(ship.rotation)
+
+function initPlay() {
+	
+	rotateValue = 0;
+	accelValue = 0;
+	rotateMin = -2;
+	rotateMax = 2;
+	rotateScaling = 0.01;
+	
+	ship.scale.set(0.22,0.22);
+	ship.x = gameWidth/2 - ship.width/2;
+	ship.y = gameHeight/2 - ship.height/2;
+	ship.vx = 0;
+	ship.vy = 0;
+	ship.anchor.x = 0.5;
+	ship.anchor.y = 0.5;
+	
 	window.addEventListener("keydown", function (e){
 		e.preventDefault();
 		switch(e.keyCode){
-		//tourner à droite / à gauche
+		//tourner à gauche / à droite
 			case 37:
-				ship.rotation += 0.01;
+				rotateValue -= 1;
 			break;
 				
 			case 39:
-				ship.rotation -= 0.01;
+				rotateValue += 1;
 			break;
 		//avancer / reculer
 			case 38:
-				ship.x = ship.x + 0.01 * Math.sin(ship.rotation);
-				ship.y = ship.y + 0.01 * Math.cos(ship.rotation);
+				accelValue += 1;
 			break;
 			
 			case 40:
-				ship.x = (ship.x - 0.01 * Math.cos(ship.rotation));
-				ship.y = (ship.y - 0.01 * Math.sin(ship.rotation));
+				accelValue -= 1;
 			break;
 		}
 	});
 	
-    //insérer code du jeu
-	playerMovement();
-	
-	
+	window.addEventListener("keyup", function (e){
+		e.preventDefault();
+		switch(e.keyCode){
+		//tourner à gauche / à droite
+			case 37:
+				rotateValue = 0;
+			break;
+				
+			case 39:
+				rotateValue = 0;
+			break;
+		//avancer / reculer
+			case 38:
+				accelValue = 0;
+			break;
+			
+			case 40:
+				accelValue = 0;
+			break;
+		}
+	});
 }
 
-function playerMovement() {
+//Tout le code du jeu est placé ici
+function play() {
 	
 	
-}
-
-function calcAngle(x,y,a,vel) {
+	
+	if (rotateValue <= rotateMax && rotateValue >= rotateMin) {
+		ship.rotation = ship.rotation + rotateValue * rotateScaling;
+	}
+	else if (rotateValue > rotateMax){
+		ship.rotation = ship.rotation + rotateMax * rotateScaling;
+	}
+	else if (rotateValue < rotateMin){
+		ship.rotation = ship.rotation + rotateMin * rotateScaling;
+	}
+	/*rotateValue = 0;
+	accelValue = 0;*/
 	
 }
-
-function keyboard(keyCode) {
-    var key = {};
-    key.code = keyCode;
-    key.isDown = false;
-    key.isUp = true;
-    key.press = undefined;
-    key.release = undefined;
-    //The `downHandler`
-    key.downHandler = event => {
-        if (event.keyCode === key.code) {
-            if (key.isUp && key.press) key.press();
-            key.isDown = true;
-            key.isUp = false;
-        }
-        event.preventDefault();
-    };
-
-    //The `upHandler`
-    key.upHandler = event => {
-        if (event.keyCode === key.code) {
-            if (key.isDown && key.release) key.release();
-            key.isDown = false;
-            key.isUp = true;
-        }
-        event.preventDefault();
-    };
-
-    //Attach event listeners
-    window.addEventListener(
-        "keydown", key.downHandler.bind(key), false
-    );
-    window.addEventListener(
-        "keyup", key.upHandler.bind(key), false
-    );
-    return key;
-}
-
-//http://www.zekechan.net/asteroids-html5-game-tutorial-1/
