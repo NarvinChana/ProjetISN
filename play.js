@@ -248,8 +248,8 @@ function initPlay() {
 	
 	rotateValue = 0;
 	accelValue = 0;
-	rotateMin = -2;
-	rotateMax = 2;
+	rotateLeft = -2;
+	rotateRight = 2;
 	rotateScaling = 0.01;
 	
 	ship.scale.set(0.22,0.22);
@@ -265,19 +265,19 @@ function initPlay() {
 		switch(e.keyCode){
 		//tourner à gauche / à droite
 			case 37:
-				rotateValue -= 1;
+				rotateValue = -1;
 			break;
 				
 			case 39:
-				rotateValue += 1;
+				rotateValue = 1;
 			break;
 		//avancer / reculer
 			case 38:
-				accelValue += 1;
+				accelValue = 1;
 			break;
 			
 			case 40:
-				accelValue -= 1;
+				accelValue = 1;
 			break;
 		}
 	});
@@ -309,17 +309,16 @@ function initPlay() {
 function play() {
 	
 	
-	
-	if (rotateValue <= rotateMax && rotateValue >= rotateMin) {
-		ship.rotation = ship.rotation + rotateValue * rotateScaling;
+	console.log(rotateValue, ship.rotation);
+	if (rotateValue == -1) {
+		ship.rotation = ship.rotation + rotateLeft * rotateScaling;
 	}
-	else if (rotateValue > rotateMax){
-		ship.rotation = ship.rotation + rotateMax * rotateScaling;
+	else if (rotateValue == 1){
+		ship.rotation = ship.rotation + rotateRight * rotateScaling;
 	}
-	else if (rotateValue < rotateMin){
-		ship.rotation = ship.rotation + rotateMin * rotateScaling;
-	}
+
 	/*rotateValue = 0;
 	accelValue = 0;*/
 	
 }
+
