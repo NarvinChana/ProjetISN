@@ -247,10 +247,13 @@ function menu() {
 function initPlay() {
 	
 	rotateValue = 0;
-	accelValue = 0;
 	rotateLeft = -2;
 	rotateRight = 2;
 	rotateScaling = 0.01;
+	
+	accelValue = 0;
+	accelMax,accelMin;
+	speedValue;
 	
 	ship.scale.set(0.22,0.22);
 	ship.x = gameWidth/2 - ship.width/2;
@@ -273,11 +276,11 @@ function initPlay() {
 			break;
 		//avancer / reculer
 			case 38:
-				accelValue = 1;
+				accelValue += 1;
 			break;
 			
 			case 40:
-				accelValue = 1;
+				accelValue -= 1;
 			break;
 		}
 	});
@@ -308,7 +311,6 @@ function initPlay() {
 //Tout le code du jeu est placé ici
 function play() {
 	
-	
 	console.log(rotateValue, ship.rotation);
 	if (rotateValue == -1) {
 		ship.rotation = ship.rotation + rotateLeft * rotateScaling;
@@ -316,7 +318,16 @@ function play() {
 	else if (rotateValue == 1){
 		ship.rotation = ship.rotation + rotateRight * rotateScaling;
 	}
-
+	
+	if (accelValue <= accelMax) {
+		
+	}
+	else if (accelValue >= accelMin) {
+		
+	}
+	else if(accelValue > accelMax || accelValue < accelMin) {
+		
+	}
 	/*rotateValue = 0;
 	accelValue = 0;*/
 	
