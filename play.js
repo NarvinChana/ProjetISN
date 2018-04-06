@@ -249,7 +249,7 @@ function initPlay() {
 	rotateValue = 0;
 	rotateLeft = -2;
 	rotateRight = 2;
-	rotateScaling = 0.01;
+	rotateScaling = 0.025;
 	
 	accelValue = 0;
 	accelMax = -2;
@@ -266,45 +266,31 @@ function initPlay() {
 	
 	window.addEventListener("keydown", function (e){
 		e.preventDefault();
-		switch(e.keyCode){
+		//gauche
+		if(e.keyCode == 37) {
+			rotateValue = -1;
+		}
 		//tourner à gauche / à droite
-			case 37:
-				rotateValue = -1;
-			break;
-				
-			case 39:
-				rotateValue = 1;
-			break;
-		//avancer / reculer
+		else if(e.keyCode == 39) {
+			rotateValue = 1;
+		}
+		/*//avancer / reculer
 			case 38:
 				accelValue += 1;
-			break;
+
 			
-			case 40:
 				accelValue -= 1;
-			break;
-		}
+			break;*/
 	});
 	
 	window.addEventListener("keyup", function (e){
 		e.preventDefault();
-		switch(e.keyCode){
+		if(e.keyCode == 37) {
+			rotateValue = 0;
+		}
 		//tourner à gauche / à droite
-			case 37:
-				rotateValue = 0;
-			break;
-				
-			case 39:
-				rotateValue = 0;
-			break;
-		//avancer / reculer
-			case 38:
-				accelValue = 0;
-			break;
-			
-			case 40:
-				accelValue = 0;
-			break;
+		else if(e.keyCode == 39) {
+			rotateValue = 0;
 		}
 	});
 }
@@ -312,7 +298,7 @@ function initPlay() {
 //Tout le code du jeu est placé ici
 function play() {
 	
-	console.log(rotateValue, ship.rotation);
+	console.log(rotateValue, ship.rotation, getAngle(ship));
 	if (rotateValue == -1) {
 		ship.rotation = ship.rotation + rotateLeft * rotateScaling;
 	}
@@ -332,5 +318,9 @@ function play() {
 	/*rotateValue = 0;
 	accelValue = 0;*/
 	
+}
+
+function getAngle(sprite){
+	return Math.atan2(sprite.y + sprite.height /2 , sprite.x + sprite.width /2); 
 }
 
