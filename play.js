@@ -246,14 +246,17 @@ function menu() {
 
 function initPlay() {
 	
+	//document.body.style.cursor = none;
+
+	
 	rotateValue = 0;
 	rotateLeft = -2;
 	rotateRight = 2;
 	rotateScaling = 0.025;
 	
 	accelValue = 0;
-	accelMax = -2;
-	accelMin = 2;
+	accelMax = 5;
+	accelMin = -5;
 	speedValue = 0;
 	
 	ship.scale.set(0.22,0.22);
@@ -274,13 +277,14 @@ function initPlay() {
 		else if(e.keyCode == 39) {
 			rotateValue = 1;
 		}
-		/*//avancer / reculer
-			case 38:
-				accelValue += 1;
-
-			
-				accelValue -= 1;
-			break;*/
+		//avancer / reculer
+		if(e.keyCode == 38) {
+			accelValue = 3;
+		}
+		//tourner à gauche / à droite
+		else if(e.keyCode == 40) {
+			accelValue = -3;
+		}
 	});
 	
 	window.addEventListener("keyup", function (e){
@@ -292,6 +296,13 @@ function initPlay() {
 		else if(e.keyCode == 39) {
 			rotateValue = 0;
 		}
+		if(e.keyCode == 38) {
+			accelValue = 0;
+		}
+		//tourner à gauche / à droite
+		else if(e.keyCode == 40) {
+			accelValue = 0;
+		}
 	});
 }
 
@@ -299,6 +310,7 @@ function initPlay() {
 function play() {
 	
 	console.log(rotateValue, ship.rotation, getAngle(ship));
+	
 	if (rotateValue == -1) {
 		ship.rotation = ship.rotation + rotateLeft * rotateScaling;
 	}
@@ -306,11 +318,9 @@ function play() {
 		ship.rotation = ship.rotation + rotateRight * rotateScaling;
 	}
 	
-	if (accelValue <= accelMax) {
-		
-	}
-	else if (accelValue >= accelMin) {
-		
+	if (accelValue <= accelMax || accelValue >= accelMin) {
+		ship.x += Math.cos(ship.rotation) * accelValue;
+		ship.y += Math.sin(ship.rotation) * accelValue;
 	}
 	else if(accelValue > accelMax || accelValue < accelMin) {
 		
