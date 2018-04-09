@@ -28,7 +28,8 @@ var introScene, menuScene, gameScene;
 var buttons_texture = [];
 var play, play_button, options_button, quit_button;
 var button_container, showName;
-var text, profileName = " ", validValue;
+var text, profileName = " ",
+    validValue;
 var bg, title;
 var ship;
 app.renderer.autoResize = true;
@@ -77,7 +78,7 @@ function preloading() {
     load_container.addChild(loaded, unloaded, loadFrame);
     app.stage.addChild(load_container, bg, title);
 
-	
+
     //lancement du chargement des ressources du jeu et des menus
     //après le preloading 
     load();
@@ -92,7 +93,7 @@ function load() {
         .add('options hover button', "lib/main menu/buttons/options_hover.png")
         .add('quit button', "lib/main menu/buttons/quit.png")
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
-		.add('enemy ship', "lib/vaisseau/vaisseau_enemy.png")
+        .add('enemy ship', "lib/vaisseau/vaisseau_enemy.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -112,16 +113,16 @@ function loadProgressHandler(loader, resource) {
 function setup() {
 
     introScene = new Container();
-    
+
     text = new Text('Bienvenue ! Entrez votre pseudo :', {
         fontFamily: 'PixelOperator',
         fontSize: 60,
         fill: 'black'
     });
-    text.position.set(gameWidth / 2 - text.width / 2, gameHeight *33/100);
+    text.position.set(gameWidth / 2 - text.width / 2, gameHeight * 33 / 100);
     introScene.addChild(text);
-    app.stage.addChild(introScene);  
-	
+    app.stage.addChild(introScene);
+
     buttons_texture = [
         TextureCache["lib/main menu/buttons/play.png"],
         TextureCache["lib/main menu/buttons/play_hover.png"],
@@ -169,7 +170,7 @@ function setup() {
         quit_button.texture = buttons_texture[4];
     });
     //mise en place de l'écran menu (titre + fond) dans la scène
-		
+
     showName = new Text(profileName, {
         fontFamily: 'PixelOperator',
         fontSize: 60,
@@ -180,63 +181,63 @@ function setup() {
 
     menuScene = new Container();
     menuScene.addChild(button_container, showName);
-	
-	ship = new Sprite();
-	ship.texture = TextureCache['enemy ship'];
-	
+
+    ship = new Sprite();
+    ship.texture = TextureCache['enemy ship'];
+
     gameScene = new Container();
-	gameScene.addChild(ship);
+    gameScene.addChild(ship);
     app.stage.addChild(menuScene, gameScene);
-	
-	menuScene.visible = false;
-	gameScene.visible = false;
-	
+
+    menuScene.visible = false;
+    gameScene.visible = false;
+
     state = "menu";
-	
-	gameLoop();
-	
-	document.getElementById("inputbox").addEventListener("keyup", function(event) {
-		event.preventDefault();
-		//si la touche entrée + les conditions sont réunis alors on accede au menu
-			if (event.keyCode === 13 && profileName.length < 15 && profileName.length > 2) {
-			introScene.visible = false;
-			menuScene.visible = true;
-			showName.text = "Bienvenue, " + profileName;
-			document.getElementById('inputbox').parentNode.removeChild(document.getElementById('inputbox'));
-			showName.x = gameWidth / 2 - showName.width / 2;
-			}
-	});
+
+    gameLoop();
+
+    document.getElementById("inputbox").addEventListener("keyup", function (event) {
+        event.preventDefault();
+        //si la touche entrée + les conditions sont réunis alors on accede au menu
+        if (event.keyCode === 13 && profileName.length < 15 && profileName.length > 2) {
+            introScene.visible = false;
+            menuScene.visible = true;
+            showName.text = "Bienvenue, " + profileName;
+            document.getElementById('inputbox').parentNode.removeChild(document.getElementById('inputbox'));
+            showName.x = gameWidth / 2 - showName.width / 2;
+        }
+    });
 }
 //Boucle général du jeu
 function gameLoop() {
-    switch(state){
-		case "menu" : 
-		menu();
-		break;
-		case "play" : 
-		play();
-		break;
-	}
+    switch (state) {
+        case "menu":
+            menu();
+            break;
+        case "play":
+            play();
+            break;
+    }
     window.requestAnimationFrame(gameLoop);
 }
 
 //Tout le code du menu principal est placé ici
 function menu() {
-	
-	if (document.getElementById('inputbox') != null ){
-		profileName = document.getElementById('inputbox').value;
-	}
- 
+
+    if (document.getElementById('inputbox') != null) {
+        profileName = document.getElementById('inputbox').value;
+    }
+
     play_button.on("click", function () {
         menuScene.visible = false;
         title.visible = false;
-		gameScene.visible = true;
-		initPlay();
-		state = "play";
+        gameScene.visible = true;
+        initPlay();
+        state = "play";
     })
     options_button.on("click", function () {
-		title.visible = false;
-		menuScene.visible = false;
+        title.visible = false;
+        menuScene.visible = false;
     })
     quit_button.on("click", function () {
         location.reload();
@@ -245,92 +246,64 @@ function menu() {
 }
 
 function initPlay() {
-	
-	//document.body.style.cursor = none;
 
-	
-	rotateValue = 0;
-	rotateLeft = -2;
-	rotateRight = 2;
-	rotateScaling = 0.025;
-	
-	accelValue = 0;
-	accelMax = 5;
-	accelMin = -5;
-	speedValue = 0;
-	
-	ship.scale.set(0.22,0.22);
-	ship.x = gameWidth/2 - ship.width/2;
-	ship.y = gameHeight/2 - ship.height/2;
-	ship.vx = 0;
-	ship.vy = 0;
-	ship.anchor.x = 0.5;
-	ship.anchor.y = 0.5;
-	
-	window.addEventListener("keydown", function (e){
-		e.preventDefault();
-		//gauche
-		if(e.keyCode == 37) {
-			rotateValue = -1;
-		}
-		//tourner à gauche / à droite
-		else if(e.keyCode == 39) {
-			rotateValue = 1;
-		}
-		//avancer / reculer
-		if(e.keyCode == 38) {
-			accelValue = 3;
-		}
-		//tourner à gauche / à droite
-		else if(e.keyCode == 40) {
-			accelValue = -3;
-		}
-	});
-	
-	window.addEventListener("keyup", function (e){
-		e.preventDefault();
-		if(e.keyCode == 37) {
-			rotateValue = 0;
-		}
-		//tourner à gauche / à droite
-		else if(e.keyCode == 39) {
-			rotateValue = 0;
-		}
-		if(e.keyCode == 38) {
-			accelValue = 0;
-		}
-		//tourner à gauche / à droite
-		else if(e.keyCode == 40) {
-			accelValue = 0;
-		}
-	});
+    //document.body.style.cursor = none;
+
+    keys = [];
+
+    rotateValue = 0;
+    rotateLeft = -2;
+    rotateRight = 2;
+    rotateScaling = 0.025;
+
+    vel = 0;
+    friction = 0.95;
+    accelMax = 5;
+    accelMin = -5;
+    speedValue = 0;
+
+    ship.scale.set(0.22, 0.22);
+    ship.x = gameWidth / 2 - ship.width / 2;
+    ship.y = gameHeight / 2 - ship.height / 2;
+    ship.anchor.x = 0.5;
+    ship.anchor.y = 0.5;
+
+    document.body.addEventListener("keydown", function (e) {
+        keys[e.keyCode] = true;
+    });
+    document.body.addEventListener("keyup", function (e) {
+        keys[e.keyCode] = false;
+    });
+
 }
 
 //Tout le code du jeu est placé ici
 function play() {
-	
-	console.log(rotateValue, ship.rotation, getAngle(ship));
-	
-	if (rotateValue == -1) {
-		ship.rotation = ship.rotation + rotateLeft * rotateScaling;
-	}
-	else if (rotateValue == 1){
-		ship.rotation = ship.rotation + rotateRight * rotateScaling;
-	}
-	
-	if (accelValue <= accelMax || accelValue >= accelMin) {
-		ship.x += Math.cos(ship.rotation) * accelValue;
-		ship.y += Math.sin(ship.rotation) * accelValue;
-	}
-	else if(accelValue > accelMax || accelValue < accelMin) {
-		
-	}
-	/*rotateValue = 0;
-	accelValue = 0;*/
-	
+    //left/right
+    if (keys[37]) {
+        ship.rotation = ship.rotation + rotateLeft * rotateScaling;
+    }
+    if (keys[39]) {
+        ship.rotation = ship.rotation + rotateRight * rotateScaling;
+    }
+    if (keys[38]) {
+        vel++;
+    }
+    if (keys[40]) {
+        vel--;
+    }
+
+    vel *= friction;
+    console.log(rotateValue, ship.rotation, getAngle(ship));
+
+    if (vel <= accelMax || vel >= accelMin) {
+        ship.x += Math.cos(ship.rotation) * vel;
+        ship.y += Math.sin(ship.rotation) * vel;
+
+
+    }
 }
 
-function getAngle(sprite){
-	return Math.atan2(sprite.y + sprite.height /2 , sprite.x + sprite.width /2); 
+function getAngle(sprite) {
+    return Math.atan2(sprite.y + sprite.height / 2, sprite.x + sprite.width / 2);
 }
-
