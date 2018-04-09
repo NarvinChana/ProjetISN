@@ -94,6 +94,7 @@ function load() {
         .add('quit button', "lib/main menu/buttons/quit.png")
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
         .add('enemy ship', "lib/vaisseau/vaisseau_enemy.png")
+        .add('ally laser', "lib/vaisseau/allyLaser.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -119,9 +120,48 @@ function setup() {
         fontSize: 60,
         fill: 'black'
     });
-    text.position.set(gameWidth / 2 - text.width / 2, gameHeight * 33 / 100);
-    introScene.addChild(text);
-    app.stage.addChild(introScene);
+
+    //Création des éléments du menu principal
+    play_button = new Sprite();
+    options_button = new Sprite();
+    quit_button = new Sprite;
+    button_container = new Container();
+    showName = new Text(profileName, {
+        fontFamily: 'PixelOperator',
+        fontSize: 60,
+        fill: 'black'
+    });
+
+    //Création des sprites du jeu
+    ship = new Sprite();
+
+    menuScene = new Container();
+    gameScene = new Container();
+
+
+    state = "menu";
+
+    initMenu();
+
+    gameLoop();
+
+}
+
+//Boucle général du jeu
+function gameLoop() {
+    switch (state) {
+        case "menu":
+            menu();
+            break;
+        case "play":
+            play();
+            break;
+    }
+    window.requestAnimationFrame(gameLoop);
+}
+
+//L'initialization du menu principal
+function initMenu() {
 
     buttons_texture = [
         TextureCache["lib/main menu/buttons/play.png"],
@@ -132,13 +172,14 @@ function setup() {
         TextureCache["lib/main menu/buttons/quit_hover.png"]
     ]
 
-    button_container = new Container();
+    text.position.set(gameWidth / 2 - text.width / 2, gameHeight * 33 / 100);
+    introScene.addChild(text);
+    app.stage.addChild(introScene);
 
-    play_button = new Sprite();
-    options_button = new Sprite();
-    quit_button = new Sprite;
+    showName.y = gameHeight * 33 / 100;
 
     button_container.addChild(play_button, options_button, quit_button);
+    menuScene.addChild(button_container, showName);
 
     for (var i = 0; i < 3; i++) {
         button_container.getChildAt(i).texture = buttons_texture[i * 2];
@@ -169,32 +210,12 @@ function setup() {
     quit_button.on('mouseout', function () {
         quit_button.texture = buttons_texture[4];
     });
-    //mise en place de l'écran menu (titre + fond) dans la scène
 
-    showName = new Text(profileName, {
-        fontFamily: 'PixelOperator',
-        fontSize: 60,
-        fill: 'black'
-    });
-    showName.y = gameHeight * 33 / 100;
-
-
-    menuScene = new Container();
-    menuScene.addChild(button_container, showName);
-
-    ship = new Sprite();
-    ship.texture = TextureCache['enemy ship'];
-
-    gameScene = new Container();
     gameScene.addChild(ship);
     app.stage.addChild(menuScene, gameScene);
 
     menuScene.visible = false;
     gameScene.visible = false;
-
-    state = "menu";
-
-    gameLoop();
 
     document.getElementById("inputbox").addEventListener("keyup", function (event) {
         event.preventDefault();
@@ -207,18 +228,7 @@ function setup() {
             showName.x = gameWidth / 2 - showName.width / 2;
         }
     });
-}
-//Boucle général du jeu
-function gameLoop() {
-    switch (state) {
-        case "menu":
-            menu();
-            break;
-        case "play":
-            play();
-            break;
-    }
-    window.requestAnimationFrame(gameLoop);
+
 }
 
 //Tout le code du menu principal est placé ici
@@ -246,33 +256,31 @@ function menu() {
 }
 
 function initPlay() {
-    
-    //curseur transparent
-    document.getElementById("jeu").style.cursor = "none";
-    
+
+    ship.texture = TextureCache['enemy ship'];
+
+    //document.body.style.cursor = none;
+
     keys = [];
-    
-    //valeurs de rotation
+    bullets = [];
+    bulletSpeed = 10;
+
     rotateValue = 0;
     rotateLeft = -2;
     rotateRight = 2;
-    rotateScaling = 0.025;
+    rotateScaling = 0.035;
 
-    //valeurs mecaniques
     vel = 0;
     friction = 0.95;
     accelMax = 5;
     accelMin = -5;
-    speedValue = 0;
 
-    //initialisation du sprite vaisseau
-    ship.scale.set(0.22, 0.22);
+    ship.scale.set(0.20, 0.20);
     ship.x = gameWidth / 2 - ship.width / 2;
     ship.y = gameHeight / 2 - ship.height / 2;
     ship.anchor.x = 0.5;
     ship.anchor.y = 0.5;
 
-    //mise sur écoute des touches du clavier
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
     });
@@ -284,32 +292,45 @@ function initPlay() {
 
 //Tout le code du jeu est placé ici
 function play() {
-    // left / right
+    //left/right
     if (keys[37]) {
         ship.rotation = ship.rotation + rotateLeft * rotateScaling;
     }
     if (keys[39]) {
         ship.rotation = ship.rotation + rotateRight * rotateScaling;
     }
-    // up / down
     if (keys[38]) {
-        vel++;
+        if (vel <= accelMax) {
+            vel++;
+        }
     }
     if (keys[40]) {
-        vel--;
+        if (vel >= accelMin) {
+            vel--;
+        }
+    }
+    if (keys[32]) {
+        shoot(ship);
     }
 
     vel *= friction;
-    console.log(rotateValue, ship.rotation, getAngle(ship));
 
-    if (vel <= accelMax || vel >= accelMin) {
-        ship.x += Math.cos(ship.rotation) * vel;
-        ship.y += Math.sin(ship.rotation) * vel;
+    ship.x += Math.cos(ship.rotation) * vel;
+    ship.y += Math.sin(ship.rotation) * vel;
 
-
+    for (var b = bullets.length - 1; b >= 0; b--) {
+        bullets[b].x += Math.cos(bullets[b].rotation) * bulletSpeed;
+        bullets[b].y += Math.sin(bullets[b].rotation) * bulletSpeed;
     }
 }
 
-function getAngle(sprite) {
-    return Math.atan2(sprite.y + sprite.height / 2, sprite.x + sprite.width / 2);
+function shoot(startPosition) {
+    var bullet = new Sprite();
+    bullet.texture = TextureCache['ally laser'];
+    bullet.scale.set(0.1, 0.1);
+    bullet.x = startPosition.x;
+    bullet.y = startPosition.y;
+    bullet.rotation = startPosition.rotation;
+    gameScene.addChild(bullet);
+    bullets.push(bullet);
 }
