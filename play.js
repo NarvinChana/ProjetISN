@@ -246,28 +246,33 @@ function menu() {
 }
 
 function initPlay() {
-
-    //document.body.style.cursor = none;
-
+    
+    //curseur transparent
+	document.getElementById("jeu").style.cursor = "none";
+    
     keys = [];
-
+    
+    //valeurs de rotation
     rotateValue = 0;
     rotateLeft = -2;
     rotateRight = 2;
     rotateScaling = 0.025;
 
+    //valeurs mecaniques
     vel = 0;
     friction = 0.95;
     accelMax = 5;
     accelMin = -5;
     speedValue = 0;
 
+    //initialisation du sprite vaisseau
     ship.scale.set(0.22, 0.22);
     ship.x = gameWidth / 2 - ship.width / 2;
     ship.y = gameHeight / 2 - ship.height / 2;
     ship.anchor.x = 0.5;
     ship.anchor.y = 0.5;
 
+    //mise sur écoute des touches du clavier
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
     });
@@ -279,13 +284,14 @@ function initPlay() {
 
 //Tout le code du jeu est placé ici
 function play() {
-    //left/right
+    // left / right
     if (keys[37]) {
         ship.rotation = ship.rotation + rotateLeft * rotateScaling;
     }
     if (keys[39]) {
         ship.rotation = ship.rotation + rotateRight * rotateScaling;
     }
+    // up / down
     if (keys[38]) {
         vel++;
     }
