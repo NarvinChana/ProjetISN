@@ -248,7 +248,7 @@ function menu() {
 function initPlay() {
     
     //curseur transparent
-	document.getElementById("jeu").style.cursor = "none";
+    document.getElementById("jeu").style.cursor = "none";
     
     keys = [];
     
