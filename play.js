@@ -259,23 +259,23 @@ function initPlay() {
 
     ship.texture = TextureCache['enemy ship'];
 
-    //document.body.style.cursor = none;
+    document.getElementById('jeu').style.cursor = 'none';
 
     keys = [];
     bullets = [];
-    bulletSpeed = 10;
+    bulletSpeed = 15;
 
     rotateValue = 0;
     rotateLeft = -2;
     rotateRight = 2;
-    rotateScaling = 0.035;
+    rotateScaling = 0.045;
 
     vel = 0;
     friction = 0.95;
     accelMax = 5;
     accelMin = -5;
 
-    ship.scale.set(0.20, 0.20);
+    ship.scale.set(0.18, 0.18);
     ship.x = gameWidth / 2 - ship.width / 2;
     ship.y = gameHeight / 2 - ship.height / 2;
     ship.anchor.x = 0.5;
@@ -312,7 +312,16 @@ function play() {
     if (keys[32]) {
         shoot(ship);
     }
-
+	
+	if (keys[66]) {
+		ship.scale.set(0.1,0.1);
+		vel += 2;
+		bulletSpeed = 20;
+	}
+	else if (keys[66] === false) {
+		ship.scale.set(0.18,0.18);
+		bulletSpeed = 15;
+	}
     vel *= friction;
 
     ship.x += Math.cos(ship.rotation) * vel;
@@ -321,7 +330,23 @@ function play() {
     for (var b = bullets.length - 1; b >= 0; b--) {
         bullets[b].x += Math.cos(bullets[b].rotation) * bulletSpeed;
         bullets[b].y += Math.sin(bullets[b].rotation) * bulletSpeed;
+		if(bullets[b].x < 0 || bullets[b].x > gameWidth || bullets[b].y < 0 || bullets[b].y > gameHeight) {
+			gameScene.removeChild(bullets[b]);
+		}
     }
+	
+	if (ship.x < 0) {
+		ship.x = gameWidth;
+	}
+	else if (ship.x > gameWidth) {
+		ship.x = 0;
+	}
+	else if (ship.y < 0) {
+		ship.y = gameHeight;
+	}
+	else if (ship.y > gameHeight) {
+		ship.y = 0;
+	}
 }
 
 function shoot(startPosition) {
