@@ -21,6 +21,9 @@ V.0.003:
 
 - ajout d'une fonction de preloading
 
-V.0.004 :
+V.0.004:
 
 - ajout de fonctions relatives aux mouvements
+
+V.0.005:
+- ajout d'une fonction de tirs et transitions d'écran haut/bas et gauche/droite
