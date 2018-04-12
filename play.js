@@ -93,8 +93,8 @@ function load() {
         .add('options hover button', "lib/main menu/buttons/options_hover.png")
         .add('quit button', "lib/main menu/buttons/quit.png")
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
-        .add('enemy ship', "lib/vaisseau/vaisseau_enemy.png")
-        .add('ally laser', "lib/vaisseau/allyLaser.png")
+        .add('player ship', "lib/ships/player_ship.png")
+        .add('ally laser', "lib/ships/particles/laser1.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -293,18 +293,18 @@ function initPlay() {
 //Tout le code du jeu est placé ici
 function play() {
     //left/right
-    if (keys[37]) {
+    if (keys[100]) {
         ship.rotation = ship.rotation + rotateLeft * rotateScaling;
     }
-    if (keys[39]) {
+    if (keys[102]) {
         ship.rotation = ship.rotation + rotateRight * rotateScaling;
     }
-    if (keys[38]) {
+    if (keys[104]) {
         if (vel <= accelMax) {
             vel++;
         }
     }
-    if (keys[40]) {
+    if (keys[101]) {
         if (vel >= accelMin) {
             vel--;
         }
