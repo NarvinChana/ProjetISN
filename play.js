@@ -31,7 +31,7 @@ var button_container, showName;
 var text, profileName = " ",
     validValue;
 var bg, title;
-var ship;
+var ship, enemyShip;
 app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
@@ -94,7 +94,9 @@ function load() {
         .add('quit button', "lib/main menu/buttons/quit.png")
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
         .add('player ship', "lib/ships/player_ship.png")
-        .add('ally laser', "lib/ships/particles/laser1.png")
+		.add('enemy ship', "lib/ships/enemy_ship.png")
+        .add('laser1', "lib/ships/particles/laser1.png")
+		.add('laser2', "lib/ships/particles/laser2.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -134,7 +136,8 @@ function setup() {
 
     //Création des sprites du jeu
     ship = new Sprite();
-
+	enemyShip = new Sprite();
+	
     menuScene = new Container();
     gameScene = new Container();
 
@@ -211,7 +214,7 @@ function initMenu() {
         quit_button.texture = buttons_texture[4];
     });
 
-    gameScene.addChild(ship);
+    gameScene.addChild(ship, enemyShip);
     app.stage.addChild(menuScene, gameScene);
 
     menuScene.visible = false;
@@ -257,8 +260,8 @@ function menu() {
 
 function initPlay() {
 
-    ship.texture = TextureCache['enemy ship'];
-
+    ship.texture = TextureCache['player ship'];
+	enemyShip.texture = TextureCache['enemy ship'];
     document.getElementById('jeu').style.cursor = 'none';
 
     keys = [];
@@ -275,12 +278,22 @@ function initPlay() {
     accelMax = 5;
     accelMin = -5;
 
+	shipHealth = 10;
     ship.scale.set(0.18, 0.18);
     ship.x = gameWidth / 2 - ship.width / 2;
     ship.y = gameHeight / 2 - ship.height / 2;
     ship.anchor.x = 0.5;
     ship.anchor.y = 0.5;
+	shootDelay = 0;
+	
+	
+	enemyShip.scale.set(0.18,0.18);	
+	enemyShip.x = -enemyShip.width;
+	enemyShip.y = gameHeight/2;
+	enemyShip.anchor.x = 0.5;
+    enemyShip.anchor.y = 0.5;
 
+	
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
     });
@@ -310,8 +323,11 @@ function play() {
         }
     }
     if (keys[32]) {
-        shoot(ship);
-    }
+		shootDelay ++;
+		if(shootDelay % 10 === 0) {
+			shoot(ship, 1);
+		}
+	}
 	
 	if (keys[66]) {
 		ship.scale.set(0.1,0.1);
@@ -333,29 +349,74 @@ function play() {
 		if(bullets[b].x < 0 || bullets[b].x > gameWidth || bullets[b].y < 0 || bullets[b].y > gameHeight) {
 			gameScene.removeChild(bullets[b]);
 		}
+		/*if(checkCollision(bullets[b],ship) == true) {
+			shipHealth --;
+			gameScene.removeChild(bullets[b]);
+		}*/
+		
     }
 	
-	if (ship.x < 0) {
-		ship.x = gameWidth;
+	if (shipHealth == 0) {
+		gameScene.removeChild(ship);
 	}
-	else if (ship.x > gameWidth) {
-		ship.x = 0;
+	
+	checkBoundaries(ship);
+	checkBoundaries(enemyShip);
+	
+	enemyShip.x += 5;
+	
+	if(random() == true) {
+		shoot(enemyShip, 2);
 	}
-	else if (ship.y < 0) {
-		ship.y = gameHeight;
-	}
-	else if (ship.y > gameHeight) {
-		ship.y = 0;
-	}
+	
 }
 
-function shoot(startPosition) {
+function shoot(startPosition, laser) {
     var bullet = new Sprite();
-    bullet.texture = TextureCache['ally laser'];
-    bullet.scale.set(0.1, 0.1);
+	if(laser == 1) {	
+		bullet.texture = TextureCache['laser1'];
+    }
+	else if(laser == 2) {
+		bullet.texture = TextureCache['laser2'];
+	}
+	bullet.scale.set(0.1, 0.1);
     bullet.x = startPosition.x;
     bullet.y = startPosition.y;
     bullet.rotation = startPosition.rotation;
     gameScene.addChild(bullet);
     bullets.push(bullet);
 }
+
+function random(){
+	var rand = Math.random();
+	if(rand < 0.10) {
+		return true;
+	}
+	else if(rand >= 0.10) {
+		return false;
+	}
+}
+
+function checkBoundaries(object) {
+	if (object.x < 0) {
+		object.x = gameWidth;
+	}
+	else if (object.x > gameWidth) {
+		object.x = 0;
+	}
+	else if (object.y < 0) {
+		object.y = gameHeight;
+	}
+	else if (object.y > gameHeight) {
+		object.y = 0;
+	}
+}
+/*
+function checkCollision(projectile, ship) {
+	if(projectile.x >= ship.x && projectile.y >= ship.y && projectile.x < ship.x + ship.width && ship.y < ship.y + ship.height){
+		return true;
+	}
+	else {
+		return false;
+	}
+}*/
