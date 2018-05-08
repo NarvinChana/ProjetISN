@@ -94,9 +94,12 @@ function load() {
         .add('quit button', "lib/main menu/buttons/quit.png")
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
         .add('player ship', "lib/ships/player_ship.png")
-		.add('enemy ship', "lib/ships/enemy_ship.png")
+        .add('enemy ship', "lib/ships/enemy_ship.png")
         .add('laser1', "lib/ships/particles/laser1.png")
-		.add('laser2', "lib/ships/particles/laser2.png")
+        .add('laser2', "lib/ships/particles/laser2.png")
+        .add('menuMusic', "lib/sounds/mainMenu.mp3")
+        .add('gameMusic1', "lib/sounds/gameMusic1.mp3")
+        .add('pew1', "lib/sounds/laser1.mp3")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -136,8 +139,8 @@ function setup() {
 
     //Création des sprites du jeu
     ship = new Sprite();
-	enemyShip = new Sprite();
-	
+    enemyShip = new Sprite();
+
     menuScene = new Container();
     gameScene = new Container();
 
@@ -232,6 +235,8 @@ function initMenu() {
         }
     });
 
+    PIXI.sound.play('menuMusic');
+
 }
 
 //Tout le code du menu principal est placé ici
@@ -245,6 +250,7 @@ function menu() {
         menuScene.visible = false;
         title.visible = false;
         gameScene.visible = true;
+        PIXI.sound.stop('menuMusic');
         initPlay();
         state = "play";
     })
@@ -261,7 +267,7 @@ function menu() {
 function initPlay() {
 
     ship.texture = TextureCache['player ship'];
-	enemyShip.texture = TextureCache['enemy ship'];
+    enemyShip.texture = TextureCache['enemy ship'];
     document.getElementById('jeu').style.cursor = 'none';
 
     keys = [];
@@ -278,66 +284,66 @@ function initPlay() {
     accelMax = 5;
     accelMin = -5;
 
-	shipHealth = 10;
+    shipHealth = 10;
     ship.scale.set(0.18, 0.18);
     ship.x = gameWidth / 2 - ship.width / 2;
     ship.y = gameHeight / 2 - ship.height / 2;
     ship.anchor.x = 0.5;
     ship.anchor.y = 0.5;
-	shootDelay = 0;
-	
-	
-	enemyShip.scale.set(0.18,0.18);	
-	enemyShip.x = -enemyShip.width;
-	enemyShip.y = gameHeight/2;
-	enemyShip.anchor.x = 0.5;
+    shootDelay = 0;
+
+
+    enemyShip.scale.set(0.18, 0.18);
+    enemyShip.x = -enemyShip.width;
+    enemyShip.y = gameHeight / 2;
+    enemyShip.anchor.x = 0.5;
     enemyShip.anchor.y = 0.5;
 
-	
+
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
     });
     document.body.addEventListener("keyup", function (e) {
         keys[e.keyCode] = false;
     });
-
+    PIXI.sound.play('gameMusic1');
 }
 
 //Tout le code du jeu est placé ici
 function play() {
     //left/right
-    if (keys[100]) {
+    if (keys[81]) {
         ship.rotation = ship.rotation + rotateLeft * rotateScaling;
     }
-    if (keys[102]) {
+    if (keys[68]) {
         ship.rotation = ship.rotation + rotateRight * rotateScaling;
     }
-    if (keys[104]) {
+    if (keys[90]) {
         if (vel <= accelMax) {
             vel++;
         }
     }
-    if (keys[101]) {
+    if (keys[83]) {
         if (vel >= accelMin) {
             vel--;
         }
     }
     if (keys[32]) {
-		shootDelay ++;
-		if(shootDelay % 10 === 0) {
-			shoot(ship, 1);
-		}
-	}
-	
-	if (keys[66]) {
-		ship.scale.set(0.1,0.1);
-		vel += 2;
-		bulletSpeed = 20;
-	}
-	else if (keys[66] === false) {
-		ship.scale.set(0.18,0.18);
-		bulletSpeed = 15;
-	}
+        shootDelay++;
+        if (shootDelay % 10 === 0) {
+            shoot(ship, 1);
+            PIXI.sound.play('pew1');
+        }
+    }
+
+    if (keys[66]) {
+        ship.scale.set(0.1, 0.1);
+        vel += 2;
+        bulletSpeed = 20;
+    } else if (keys[66] === false) {
+        ship.scale.set(0.18, 0.18);
+        bulletSpeed = 15;
+    }
     vel *= friction;
 
     ship.x += Math.cos(ship.rotation) * vel;
@@ -346,40 +352,38 @@ function play() {
     for (var b = bullets.length - 1; b >= 0; b--) {
         bullets[b].x += Math.cos(bullets[b].rotation) * bulletSpeed;
         bullets[b].y += Math.sin(bullets[b].rotation) * bulletSpeed;
-		if(bullets[b].x < 0 || bullets[b].x > gameWidth || bullets[b].y < 0 || bullets[b].y > gameHeight) {
-			gameScene.removeChild(bullets[b]);
-		}
-		/*if(checkCollision(bullets[b],ship) == true) {
-			shipHealth --;
-			gameScene.removeChild(bullets[b]);
-		}*/
-		
+        if (bullets[b].x < 0 || bullets[b].x > gameWidth || bullets[b].y < 0 || bullets[b].y > gameHeight) {
+            gameScene.removeChild(bullets[b]);
+        }
+        /*if(checkCollision(bullets[b],ship) == true) {
+        	shipHealth --;
+        	gameScene.removeChild(bullets[b]);
+        }*/
+
     }
-	
-	if (shipHealth == 0) {
-		gameScene.removeChild(ship);
-	}
-	
-	checkBoundaries(ship);
-	checkBoundaries(enemyShip);
-	
-	enemyShip.x += 5;
-	
-	if(random() == true) {
-		shoot(enemyShip, 2);
-	}
-	
+
+    if (shipHealth == 0) {
+        gameScene.removeChild(ship);
+    }
+
+    checkBoundaries(ship);
+    checkBoundaries(enemyShip);
+
+    enemyShip.x += 5;
+
+    if (random() == true) {
+        shoot(enemyShip, 2);
+    }
 }
 
 function shoot(startPosition, laser) {
     var bullet = new Sprite();
-	if(laser == 1) {	
-		bullet.texture = TextureCache['laser1'];
+    if (laser == 1) {
+        bullet.texture = TextureCache['laser1'];
+    } else if (laser == 2) {
+        bullet.texture = TextureCache['laser2'];
     }
-	else if(laser == 2) {
-		bullet.texture = TextureCache['laser2'];
-	}
-	bullet.scale.set(0.1, 0.1);
+    bullet.scale.set(0.1, 0.1);
     bullet.x = startPosition.x;
     bullet.y = startPosition.y;
     bullet.rotation = startPosition.rotation;
@@ -387,29 +391,25 @@ function shoot(startPosition, laser) {
     bullets.push(bullet);
 }
 
-function random(){
-	var rand = Math.random();
-	if(rand < 0.10) {
-		return true;
-	}
-	else if(rand >= 0.10) {
-		return false;
-	}
+function random() {
+    var rand = Math.random();
+    if (rand < 0.10) {
+        return true;
+    } else if (rand >= 0.10) {
+        return false;
+    }
 }
 
 function checkBoundaries(object) {
-	if (object.x < 0) {
-		object.x = gameWidth;
-	}
-	else if (object.x > gameWidth) {
-		object.x = 0;
-	}
-	else if (object.y < 0) {
-		object.y = gameHeight;
-	}
-	else if (object.y > gameHeight) {
-		object.y = 0;
-	}
+    if (object.x < 0) {
+        object.x = gameWidth;
+    } else if (object.x > gameWidth) {
+        object.x = 0;
+    } else if (object.y < 0) {
+        object.y = gameHeight;
+    } else if (object.y > gameHeight) {
+        object.y = 0;
+    }
 }
 /*
 function checkCollision(projectile, ship) {
