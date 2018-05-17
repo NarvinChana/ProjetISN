@@ -97,8 +97,6 @@ function load() {
         .add('enemy ship', "lib/ships/enemy_ship.png")
         .add('laser1', "lib/ships/particles/laser1.png")
         .add('laser2', "lib/ships/particles/laser2.png")
-        .add('menuMusic', "lib/sounds/mainMenu.mp3")
-        .add('gameMusic1', "lib/sounds/gameMusic1.mp3")
         .add('pew1', "lib/sounds/laser1.mp3")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
@@ -117,7 +115,7 @@ function loadProgressHandler(loader, resource) {
 }
 //Initialisation des images, textures et containers
 function setup() {
-
+	
     introScene = new Container();
 
     text = new Text('Bienvenue ! Entrez votre pseudo :', {
@@ -144,7 +142,6 @@ function setup() {
     menuScene = new Container();
     gameScene = new Container();
 
-
     state = "menu";
 
     initMenu();
@@ -168,7 +165,7 @@ function gameLoop() {
 
 //L'initialization du menu principal
 function initMenu() {
-
+	
     buttons_texture = [
         TextureCache["lib/main menu/buttons/play.png"],
         TextureCache["lib/main menu/buttons/play_hover.png"],
@@ -234,14 +231,13 @@ function initMenu() {
             showName.x = gameWidth / 2 - showName.width / 2;
         }
     });
-
-    PIXI.sound.play('menuMusic');
-
+	
+	document.getElementById("menuMusic").play();
 }
 
 //Tout le code du menu principal est placé ici
 function menu() {
-
+	
     if (document.getElementById('inputbox') != null) {
         profileName = document.getElementById('inputbox').value;
     }
@@ -250,7 +246,8 @@ function menu() {
         menuScene.visible = false;
         title.visible = false;
         gameScene.visible = true;
-        PIXI.sound.stop('menuMusic');
+		document.getElementById("menuMusic").pause();
+		document.getElementById("menuMusic").currentTime = 0;
         initPlay();
         state = "play";
     })
@@ -265,7 +262,7 @@ function menu() {
 }
 
 function initPlay() {
-
+	
     ship.texture = TextureCache['player ship'];
     enemyShip.texture = TextureCache['enemy ship'];
     document.getElementById('jeu').style.cursor = 'none';
@@ -306,7 +303,8 @@ function initPlay() {
     document.body.addEventListener("keyup", function (e) {
         keys[e.keyCode] = false;
     });
-    PIXI.sound.play('gameMusic1');
+	
+	document.getElementById("gameMusic1").play();
 }
 
 //Tout le code du jeu est placé ici
@@ -344,6 +342,7 @@ function play() {
         ship.scale.set(0.18, 0.18);
         bulletSpeed = 15;
     }
+	
     vel *= friction;
 
     ship.x += Math.cos(ship.rotation) * vel;
