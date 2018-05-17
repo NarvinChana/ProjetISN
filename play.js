@@ -98,6 +98,9 @@ function load() {
         .add('laser1', "lib/ships/particles/laser1.png")
         .add('laser2', "lib/ships/particles/laser2.png")
         .add('pew1', "lib/sounds/laser1.mp3")
+	.add('hb frame', "lib/HUD/hb_frame.png")
+	.add('hb empty', "lib/HUD/hb_empty")
+	.add('hb fill', "lib/HUD/hb_fill")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
