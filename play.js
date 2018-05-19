@@ -25,7 +25,7 @@ document.getElementById("jeu").appendChild(app.view);
 
 //variables qui seront utilisées dans plusieurs fonctions
 var state;
-var introScene, menuScene, gameScene;
+var introScene, menuScene, gameScene, optionScene;
 var buttons_texture = [];
 var play, play_button, options_button, quit_button;
 var button_container, showName;
@@ -142,7 +142,8 @@ function setup() {
         fontSize: 60,
         fill: 'black'
     });
-
+    
+    optionScene = new Container();
     menuScene = new Container();
     gameScene = new Container();
 
@@ -297,41 +298,35 @@ function initPlay() {
     createEnemy();
     enemySpeed = 2;
 
-    //bar de vie du joueur
-    hbFrame = new Sprite();
-    hbEmpty = new Sprite();
-    hbFill = new Sprite();
-    hbPercent = new Text();
-
     //mise en place de la barre de vie
-    hbPercent.text = healthPercent + "%", {
+	hbPercent = new Text(healthPercent + "%", {
         fontFamily: 'PixelOperator8-Bold',
         fontSize: 60,
         fill: 'black'
-    };
-
-    hbFrame.texture = TextureCache['hb frame'];
+    });
+    
+    hbFrame = new Sprite(resources["lib/HUD/hb_frame.png"].texture);
     hbFrame.width = gameWidth * 5 / 100;
-    hbFrame.height = gameHeight * 90 / 100;
-    hbFrame.x = gameWidth / 100;
+    hbFrame.height =  gameHeight * 90 / 100;
+    hbFrame.x = gameWidth / 100 ;
     hbFrame.y = 10 / 100 * gameHeight;
-
-    hbFill.texture = TextureCache['hb fill'];
-    hbFill.width = hbFrame.width;
-    hbFill.height = hbFrame.height;
-    hbFill.x = hbFrame.x;
-    hbFill.y = hbFrame.y;
-
-    hbEmpty.texture = TextureCache['hb empty'];
-    hbEmpty.width = hbFrame.width;
-    hbEmpty.height = 0;
-    hbEmpty.x = hbFrame.x;
-    hbEmpty.y = hbFrame.y;
-
-    hbPercent.x = gameWidth / 100;
-    hbPercent.y = 4 / 100 * gameHeight;
-    hbPercent.width = hbFrame.width;
-    hbPercent.height = gameHeight * 6 / 100;
+	
+    hbFill = new Sprite(resources["lib/HUD/hb_fill.png"].texture);
+	hbFill.width = hbFrame.width;
+	hbFill.height = hbFrame.height;
+	hbFill.x = hbFrame.x;
+	hbFill.y = hbFrame.y;
+	
+    hbEmpty= new Sprite(resources["lib/HUD/hb_empty.png"].texture);
+	hbEmpty.width = hbFrame.width;
+	hbEmpty.height = 0;
+	hbEmpty.x = hbFrame.x;
+	hbEmpty.y = hbFrame.y;
+    
+    hbPercent.x = gameWidth / 100 ;
+	hbPercent.y = 4 / 100 * gameHeight;
+	hbPercent.width = hbFrame.width;
+	hbPercent.height = gameHeight * 6/100;
 
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
