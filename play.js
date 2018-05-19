@@ -140,7 +140,7 @@ function setup() {
         fontSize: 60,
         fill: 'black'
     });
-
+    
     menuScene = new Container();
     gameScene = new Container();
 
@@ -252,8 +252,6 @@ function initMenu() {
     document.getElementById("menuMusic").play();
 
     difficulty = "facile";
-
-    console.log("ho");
 }
 
 //Tout le code du menu principal est placé ici
@@ -266,13 +264,10 @@ function menu() {
 
 function initPlay() {
 
-    console.log("hey");
-
     //Création des sprites du jeu
     ship = new Sprite();
-    gameScene.addChild(ship);
-
     ship.texture = TextureCache['player ship'];
+    
     document.getElementById('jeu').style.cursor = 'none';
 
     keys = [];
@@ -292,7 +287,7 @@ function initPlay() {
     accelMin = -5;
 
     shipHealth = 100;
-    ship.scale.set(0.20, 0.20);
+    ship.scale.set(0.18, 0.18);
     ship.x = gameWidth / 2 - ship.width / 2;
     ship.y = gameHeight / 2 - ship.height / 2;
     ship.anchor.x = 0.5;
@@ -302,6 +297,42 @@ function initPlay() {
     createEnemy();
     enemySpeed = 2;
 
+    //bar de vie du joueur
+   	hbFrame = new Sprite();
+	hbEmpty = new Sprite(); 
+	hbFill = new Sprite();
+    hbPercent = new Text();
+    
+    //mise en place de la barre de vie
+	hbPercent.text = healthPercent + "%", {
+        fontFamily: 'PixelOperator8-Bold',
+        fontSize: 60,
+        fill: 'black'
+    };
+    
+    hbFrame.texture = TextureCache['hb frame'];
+    hbFrame.width = gameWidth * 5 / 100;
+    hbFrame.height =  gameHeight * 90 / 100;
+    hbFrame.x = gameWidth / 100 ;
+    hbFrame.y = 10 / 100 * gameHeight;
+	
+	hbFill.texture = TextureCache['hb fill'];
+	hbFill.width = hbFrame.width;
+	hbFill.height = hbFrame.height;
+	hbFill.x = hbFrame.x;
+	hbFill.y = hbFrame.y;
+	
+	hbEmpty.texture = TextureCache['hb empty'];
+	hbEmpty.width = hbFrame.width;
+	hbEmpty.height = 0;
+	hbEmpty.x = hbFrame.x;
+	hbEmpty.y = hbFrame.y;
+    
+    hbPercent.x = gameWidth / 100 ;
+	hbPercent.y = 4 / 100 * gameHeight;
+	hbPercent.width = hbFrame.width;
+	hbPercent.height = gameHeight * 6/100;
+    
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
     });
@@ -311,6 +342,8 @@ function initPlay() {
 
     document.getElementById("gameMusic1").play();
 
+    gameScene.addChild(ship, hbFill, hbEmpty, hbFrame, hbPercent);
+    
     app.stage.addChild(gameScene);
 }
 
