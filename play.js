@@ -123,6 +123,8 @@ function load() {
         .add('plus', "lib/main menu/buttons/button_plus.png")
         .add('left', "lib/main menu/buttons/button_left.png")
         .add('right', "lib/main menu/buttons/button_right.png")
+        .add('theme1' "lib/main menu/buttons/theme_orangespace.png")
+        .add('theme2' "lib/main menu/buttons/theme_darkspace.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
