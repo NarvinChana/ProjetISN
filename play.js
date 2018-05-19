@@ -300,7 +300,7 @@ function initPlay() {
     shootDelay = 0;
 
     createEnemy();
-    enemySpeed = 1;
+    enemySpeed = 2;
 
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
@@ -401,6 +401,12 @@ function play() {
         if (enemyShips[b].x < 0 || enemyShips[b].x > gameWidth || enemyShips[b].y < 0 || enemyShips[b].y > gameHeight) {
             gameScene.removeChild(enemyShips[b]);
         }
+        var randTrajectory = Math.random();
+        if (randTrajectory >= 0.60) {
+            enemyShips[b].rotation += 0.03;
+        } else if (randTrajectory <= 0.40) {
+            enemyShips[b].rotation -= 0.03;
+        }
     }
 }
 
@@ -442,7 +448,7 @@ function createEnemy() {
     enemyShip.anchor.y = 0.5;
 
     if (b >= 0.5) {
-
+        enemyShip.rotation = 0;
         enemyShip.x = 0;
         enemyShip.y = (Math.random() * 100) / 100 * gameHeight;
     } else if (b < 0.5) {
