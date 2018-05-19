@@ -31,13 +31,15 @@ var play, play_button, options_button, quit_button;
 var button_container, showName;
 var text, profileName = " ",
     validValue;
-var healthPercent;
+var healthPercent = 100;
 var bg, title;
+var difficulty = "difficile";
 app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
 loader
-    .add("lib/main menu/background.png")
+    .add("lib/main menu/background_1.png")
+    .add("lib/main menu/background_2.png")
     .add("lib/main menu/title.png")
     .add("lib/main menu/loadingFrame.png")
     .add("lib/main menu/unloaded.png")
@@ -48,7 +50,7 @@ loader
 function preloading() {
 
     //préchargement du fond de base (menu principal)
-    bg = new Sprite(resources["lib/main menu/background.png"].texture);
+    bg = new Sprite(resources["lib/main menu/background_2.png"].texture);
     bg.width = gameWidth;
     bg.height = gameHeight;
 
@@ -140,7 +142,7 @@ function setup() {
         fontSize: 60,
         fill: 'black'
     });
-    
+
     menuScene = new Container();
     gameScene = new Container();
 
@@ -250,8 +252,6 @@ function initMenu() {
     })
 
     document.getElementById("menuMusic").play();
-
-    difficulty = "facile";
 }
 
 //Tout le code du menu principal est placé ici
@@ -267,7 +267,7 @@ function initPlay() {
     //Création des sprites du jeu
     ship = new Sprite();
     ship.texture = TextureCache['player ship'];
-    
+
     document.getElementById('jeu').style.cursor = 'none';
 
     keys = [];
@@ -298,41 +298,41 @@ function initPlay() {
     enemySpeed = 2;
 
     //bar de vie du joueur
-   	hbFrame = new Sprite();
-	hbEmpty = new Sprite(); 
-	hbFill = new Sprite();
+    hbFrame = new Sprite();
+    hbEmpty = new Sprite();
+    hbFill = new Sprite();
     hbPercent = new Text();
-    
+
     //mise en place de la barre de vie
-	hbPercent.text = healthPercent + "%", {
+    hbPercent.text = healthPercent + "%", {
         fontFamily: 'PixelOperator8-Bold',
         fontSize: 60,
         fill: 'black'
     };
-    
+
     hbFrame.texture = TextureCache['hb frame'];
     hbFrame.width = gameWidth * 5 / 100;
-    hbFrame.height =  gameHeight * 90 / 100;
-    hbFrame.x = gameWidth / 100 ;
+    hbFrame.height = gameHeight * 90 / 100;
+    hbFrame.x = gameWidth / 100;
     hbFrame.y = 10 / 100 * gameHeight;
-	
-	hbFill.texture = TextureCache['hb fill'];
-	hbFill.width = hbFrame.width;
-	hbFill.height = hbFrame.height;
-	hbFill.x = hbFrame.x;
-	hbFill.y = hbFrame.y;
-	
-	hbEmpty.texture = TextureCache['hb empty'];
-	hbEmpty.width = hbFrame.width;
-	hbEmpty.height = 0;
-	hbEmpty.x = hbFrame.x;
-	hbEmpty.y = hbFrame.y;
-    
-    hbPercent.x = gameWidth / 100 ;
-	hbPercent.y = 4 / 100 * gameHeight;
-	hbPercent.width = hbFrame.width;
-	hbPercent.height = gameHeight * 6/100;
-    
+
+    hbFill.texture = TextureCache['hb fill'];
+    hbFill.width = hbFrame.width;
+    hbFill.height = hbFrame.height;
+    hbFill.x = hbFrame.x;
+    hbFill.y = hbFrame.y;
+
+    hbEmpty.texture = TextureCache['hb empty'];
+    hbEmpty.width = hbFrame.width;
+    hbEmpty.height = 0;
+    hbEmpty.x = hbFrame.x;
+    hbEmpty.y = hbFrame.y;
+
+    hbPercent.x = gameWidth / 100;
+    hbPercent.y = 4 / 100 * gameHeight;
+    hbPercent.width = hbFrame.width;
+    hbPercent.height = gameHeight * 6 / 100;
+
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
     });
@@ -343,12 +343,13 @@ function initPlay() {
     document.getElementById("gameMusic1").play();
 
     gameScene.addChild(ship, hbFill, hbEmpty, hbFrame, hbPercent);
-    
+
     app.stage.addChild(gameScene);
 }
 
 //Tout le code du jeu est placé ici
 function play() {
+
     var c = Math.random();
     //tourner à gauche
     if (keys[81]) {
@@ -403,25 +404,44 @@ function play() {
         if (bullets[b].x < 0 || bullets[b].x > gameWidth || bullets[b].y < 0 || bullets[b].y > gameHeight) {
             gameScene.removeChild(bullets[b]);
         }
-        /*if (checkCollision(bullets[b], ship) == true) {
-            shipHealth -= 10;
-            if(shipHealth == 0) {
-                gameOver();
+        if (hitTestRectangle(ship, bullets[b]) == true) {
+            healthPercent -= 10;
+        }
+        for (var d = enemyShips.length - 1; d >= 0; d--) {
+            if (hitTestRectangle(enemyShips[d], bullets[b]) == true) {
+                gameScene.removeChild(enemyShips[d]);
+                enemyShips.splice(d, 1)
             }
-        }*/
+        }
     }
 
-    if (shipHealth == 0) {
-        gameScene.removeChild(ship);
+    if (enemyShips.length == 0) {
+        createEnemy();
     }
+
+    //if (healthPercent == 0) {
+    //    gameScene.removeChild(ship);
+    //}
 
     if (difficulty == "facile") {
         if (c >= 0.99 && enemyShips.length < 20) {
             createEnemy();
         }
+        for (var b = enemyShips.length - 1; b >= 0; b--) {
+            var randShoot = Math.random();
+            if (Math.random <= 0.15) {
+                shoot(enemyShips[b], 2);
+            }
+        }
     } else if (difficulty == "difficile") {
         if (c >= 0.98 && enemyShips.length < 40) {
             createEnemy();
+        }
+        for (var b = enemyShips.length - 1; b >= 0; b--) {
+            var randShoot = Math.random();
+            if (Math.random <= 0.25) {
+                shoot(enemyShips[b], 2);
+            }
         }
     }
 
@@ -492,3 +512,54 @@ function createEnemy() {
     gameScene.addChild(enemyShip);
     enemyShips.push(enemyShip);
 }
+
+function hitTestRectangle(r1, r2) {
+
+    //Define the variables we'll need to calculate
+    let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+
+    //hit will determine whether there's a collision
+    hit = false;
+
+    //Find the center points of each sprite
+    r1.centerX = r1.x + r1.width / 2;
+    r1.centerY = r1.y + r1.height / 2;
+    r2.centerX = r2.x + r2.width / 2;
+    r2.centerY = r2.y + r2.height / 2;
+
+    //Find the half-widths and half-heights of each sprite
+    r1.halfWidth = r1.width / 2;
+    r1.halfHeight = r1.height / 2;
+    r2.halfWidth = r2.width / 2;
+    r2.halfHeight = r2.height / 2;
+
+    //Calculate the distance vector between the sprites
+    vx = r1.centerX - r2.centerX;
+    vy = r1.centerY - r2.centerY;
+
+    //Figure out the combined half-widths and half-heights
+    combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+    combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+
+    //Check for a collision on the x axis
+    if (Math.abs(vx) < combinedHalfWidths) {
+
+        //A collision might be occuring. Check for a collision on the y axis
+        if (Math.abs(vy) < combinedHalfHeights) {
+
+            //There's definitely a collision happening
+            hit = true;
+        } else {
+
+            //There's no collision on the y axis
+            hit = false;
+        }
+    } else {
+
+        //There's no collision on the x axis
+        hit = false;
+    }
+
+    //`hit` will be either `true` or `false`
+    return hit;
+};
