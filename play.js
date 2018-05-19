@@ -33,7 +33,7 @@ var text, profileName = " ",
     validValue;
 var healthPercent = 100;
 var bg, title;
-var difficulty = "difficile";
+var difficulty = "facile";
 app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
@@ -50,7 +50,7 @@ loader
 function preloading() {
 
     //préchargement du fond de base (menu principal)
-    bg = new Sprite(resources["lib/main menu/background_2.png"].texture);
+    bg = new Sprite(resources["lib/main menu/background_1.png"].texture);
     bg.width = gameWidth;
     bg.height = gameHeight;
 
@@ -491,23 +491,28 @@ function checkBoundaries(object) {
 }
 
 function createEnemy() {
-
     var b = Math.random();
     var enemyShip = new Sprite();
     enemyShip.texture = TextureCache['enemy ship'];
-
     enemyShip.scale.set(0.1, 0.1);
     enemyShip.anchor.x = 0.5;
     enemyShip.anchor.y = 0.5;
-
-    if (b >= 0.5) {
+    if (b >= 0.75) {
         enemyShip.rotation = 0;
         enemyShip.x = 0;
         enemyShip.y = (Math.random() * 100) / 100 * gameHeight;
-    } else if (b < 0.5) {
+    } else if (b < 0.25) {
         enemyShip.rotation = Math.PI / 2;
         enemyShip.x = (Math.random() * 100) / 100 * gameWidth;
         enemyShip.y = 0;
+    } else if (b > 0.25 && b <= 0.50) {
+        enemyShip.rotation = -Math.PI / 2;
+        enemyShip.x = (Math.random() * 100) / 100 * gameWidth;
+        enemyShip.y = gameHeight;
+    } else if (b < 0.50 && b <= 0.75) {
+        enemyShip.rotation = 2 * Math.PI;
+        enemyShip.x = gameWidth;
+        enemyShip.y = (Math.random() * 100) / 100 * gameHeight;
     }
     gameScene.addChild(enemyShip);
     enemyShips.push(enemyShip);
