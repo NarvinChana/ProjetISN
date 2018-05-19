@@ -31,8 +31,8 @@ var play, play_button, options_button, quit_button;
 var button_container, showName;
 var text, profileName = " ",
     validValue;
+var healthPercent;
 var bg, title;
-var ship, enemyShip;
 app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
