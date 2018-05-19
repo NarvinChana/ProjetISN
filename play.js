@@ -1,3 +1,4 @@
+//Déclaration de la taille du fenêtre de jeu
 var gameWidth = window.innerWidth,
     gameHeight = window.innerHeight;
 
@@ -22,7 +23,7 @@ var app = new Application({
 document.getElementById("jeu").appendChild(app.view);
 
 
-//variables qui seront utilisé dans plusieurs fonctions
+//variables qui seront utilisées dans plusieurs fonctions
 var state;
 var introScene, menuScene, gameScene;
 var buttons_texture = [];
@@ -46,10 +47,12 @@ loader
 // fonction de "preload" ==> ecran de chargement
 function preloading() {
 
+    //préchargement du fond de base (menu principal)
     bg = new Sprite(resources["lib/main menu/background.png"].texture);
     bg.width = gameWidth;
     bg.height = gameHeight;
 
+    //préchargement de l'image du titre
     title = new Sprite(resources["lib/main menu/title.png"].texture);
     title.width = gameWidth * 70 / 100;
     title.height = gameHeight * 20 / 100;
@@ -98,9 +101,9 @@ function load() {
         .add('laser1', "lib/ships/particles/laser1.png")
         .add('laser2', "lib/ships/particles/laser2.png")
         .add('pew1', "lib/sounds/laser1.mp3")
-	.add('hb frame', "lib/HUD/hb_frame.png")
-	.add('hb empty', "lib/HUD/hb_empty")
-	.add('hb fill', "lib/HUD/hb_fill")
+        .add('hb frame', "lib/HUD/hb_frame.png")
+        .add('hb empty', "lib/HUD/hb_empty.png")
+        .add('hb fill', "lib/HUD/hb_fill.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -111,14 +114,14 @@ function load() {
 //état d'avancement de la barre de chargement
 function loadProgressHandler(loader, resource) {
     console.log("loading " + resource.name);
-    console.log("progress: " + loader.progress + "%");
+    console.log("progress: " + Math.round(loader.progress) + "%");
     var a = (loader.progress / 100) * unloaded.width;
     unloaded.width = unloaded.width - a;
     unloaded.x += a;
 }
 //Initialisation des images, textures et containers
 function setup() {
-	
+
     introScene = new Container();
 
     text = new Text('Bienvenue ! Entrez votre pseudo :', {
@@ -137,10 +140,6 @@ function setup() {
         fontSize: 60,
         fill: 'black'
     });
-
-    //Création des sprites du jeu
-    ship = new Sprite();
-    enemyShip = new Sprite();
 
     menuScene = new Container();
     gameScene = new Container();
@@ -168,7 +167,7 @@ function gameLoop() {
 
 //L'initialization du menu principal
 function initMenu() {
-	
+
     buttons_texture = [
         TextureCache["lib/main menu/buttons/play.png"],
         TextureCache["lib/main menu/buttons/play_hover.png"],
@@ -217,11 +216,9 @@ function initMenu() {
         quit_button.texture = buttons_texture[4];
     });
 
-    gameScene.addChild(ship, enemyShip);
-    app.stage.addChild(menuScene, gameScene);
+    app.stage.addChild(menuScene);
 
     menuScene.visible = false;
-    gameScene.visible = false;
 
     document.getElementById("inputbox").addEventListener("keyup", function (event) {
         event.preventDefault();
@@ -234,23 +231,13 @@ function initMenu() {
             showName.x = gameWidth / 2 - showName.width / 2;
         }
     });
-	
-	document.getElementById("menuMusic").play();
-}
-
-//Tout le code du menu principal est placé ici
-function menu() {
-	
-    if (document.getElementById('inputbox') != null) {
-        profileName = document.getElementById('inputbox').value;
-    }
 
     play_button.on("click", function () {
         menuScene.visible = false;
         title.visible = false;
         gameScene.visible = true;
-		document.getElementById("menuMusic").pause();
-		document.getElementById("menuMusic").currentTime = 0;
+        document.getElementById("menuMusic").pause();
+        document.getElementById("menuMusic").currentTime = 0;
         initPlay();
         state = "play";
     })
@@ -262,16 +249,36 @@ function menu() {
         location.reload();
     })
 
+    document.getElementById("menuMusic").play();
+
+    difficulty = "facile";
+
+    console.log("ho");
+}
+
+//Tout le code du menu principal est placé ici
+function menu() {
+
+    if (document.getElementById('inputbox') != null) {
+        profileName = document.getElementById('inputbox').value;
+    }
 }
 
 function initPlay() {
-	
+
+    console.log("hey");
+
+    //Création des sprites du jeu
+    ship = new Sprite();
+    gameScene.addChild(ship);
+
     ship.texture = TextureCache['player ship'];
-    enemyShip.texture = TextureCache['enemy ship'];
     document.getElementById('jeu').style.cursor = 'none';
 
     keys = [];
     bullets = [];
+    enemyShips = [];
+
     bulletSpeed = 15;
 
     rotateValue = 0;
@@ -284,21 +291,16 @@ function initPlay() {
     accelMax = 5;
     accelMin = -5;
 
-    shipHealth = 10;
-    ship.scale.set(0.18, 0.18);
+    shipHealth = 100;
+    ship.scale.set(0.20, 0.20);
     ship.x = gameWidth / 2 - ship.width / 2;
     ship.y = gameHeight / 2 - ship.height / 2;
     ship.anchor.x = 0.5;
     ship.anchor.y = 0.5;
     shootDelay = 0;
 
-
-    enemyShip.scale.set(0.18, 0.18);
-    enemyShip.x = -enemyShip.width;
-    enemyShip.y = gameHeight / 2;
-    enemyShip.anchor.x = 0.5;
-    enemyShip.anchor.y = 0.5;
-
+    createEnemy();
+    enemySpeed = 1;
 
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
@@ -306,29 +308,36 @@ function initPlay() {
     document.body.addEventListener("keyup", function (e) {
         keys[e.keyCode] = false;
     });
-	
-	document.getElementById("gameMusic1").play();
+
+    document.getElementById("gameMusic1").play();
+
+    app.stage.addChild(gameScene);
 }
 
 //Tout le code du jeu est placé ici
 function play() {
-    //left/right
+    var c = Math.random();
+    //tourner à gauche
     if (keys[81]) {
         ship.rotation = ship.rotation + rotateLeft * rotateScaling;
     }
+    //tourner à droite
     if (keys[68]) {
         ship.rotation = ship.rotation + rotateRight * rotateScaling;
     }
+    //accélerer
     if (keys[90]) {
         if (vel <= accelMax) {
             vel++;
         }
     }
+    //reculer
     if (keys[83]) {
         if (vel >= accelMin) {
             vel--;
         }
     }
+    //tirer
     if (keys[32]) {
         shootDelay++;
         if (shootDelay % 10 === 0) {
@@ -337,6 +346,7 @@ function play() {
         }
     }
 
+    //boost
     if (keys[66]) {
         ship.scale.set(0.1, 0.1);
         vel += 2;
@@ -345,36 +355,52 @@ function play() {
         ship.scale.set(0.18, 0.18);
         bulletSpeed = 15;
     }
-	
+
+    //application d'un réduction de mouvement
     vel *= friction;
 
+    //avancement du vaisseau
     ship.x += Math.cos(ship.rotation) * vel;
     ship.y += Math.sin(ship.rotation) * vel;
 
+    //Actualisation du trajectoire des balles
     for (var b = bullets.length - 1; b >= 0; b--) {
         bullets[b].x += Math.cos(bullets[b].rotation) * bulletSpeed;
         bullets[b].y += Math.sin(bullets[b].rotation) * bulletSpeed;
         if (bullets[b].x < 0 || bullets[b].x > gameWidth || bullets[b].y < 0 || bullets[b].y > gameHeight) {
             gameScene.removeChild(bullets[b]);
         }
-        /*if(checkCollision(bullets[b],ship) == true) {
-        	shipHealth --;
-        	gameScene.removeChild(bullets[b]);
+        /*if (checkCollision(bullets[b], ship) == true) {
+            shipHealth -= 10;
+            if(shipHealth == 0) {
+                gameOver();
+            }
         }*/
-
     }
 
     if (shipHealth == 0) {
         gameScene.removeChild(ship);
     }
 
+    if (difficulty == "facile") {
+        if (c >= 0.99 && enemyShips.length < 20) {
+            createEnemy();
+        }
+    } else if (difficulty == "difficile") {
+        if (c >= 0.98 && enemyShips.length < 40) {
+            createEnemy();
+        }
+    }
+
     checkBoundaries(ship);
-    checkBoundaries(enemyShip);
 
-    enemyShip.x += 5;
-
-    if (random() == true) {
-        shoot(enemyShip, 2);
+    for (var b = enemyShips.length - 1; b >= 0; b--) {
+        checkBoundaries(enemyShips[b]);
+        enemyShips[b].x += Math.cos(enemyShips[b].rotation) * enemySpeed;
+        enemyShips[b].y += Math.sin(enemyShips[b].rotation) * enemySpeed;
+        if (enemyShips[b].x < 0 || enemyShips[b].x > gameWidth || enemyShips[b].y < 0 || enemyShips[b].y > gameHeight) {
+            gameScene.removeChild(enemyShips[b]);
+        }
     }
 }
 
@@ -393,15 +419,6 @@ function shoot(startPosition, laser) {
     bullets.push(bullet);
 }
 
-function random() {
-    var rand = Math.random();
-    if (rand < 0.10) {
-        return true;
-    } else if (rand >= 0.10) {
-        return false;
-    }
-}
-
 function checkBoundaries(object) {
     if (object.x < 0) {
         object.x = gameWidth;
@@ -413,12 +430,26 @@ function checkBoundaries(object) {
         object.y = 0;
     }
 }
-/*
-function checkCollision(projectile, ship) {
-	if(projectile.x >= ship.x && projectile.y >= ship.y && projectile.x < ship.x + ship.width && ship.y < ship.y + ship.height){
-		return true;
-	}
-	else {
-		return false;
-	}
-}*/
+
+function createEnemy() {
+
+    var b = Math.random();
+    var enemyShip = new Sprite();
+    enemyShip.texture = TextureCache['enemy ship'];
+
+    enemyShip.scale.set(0.1, 0.1);
+    enemyShip.anchor.x = 0.5;
+    enemyShip.anchor.y = 0.5;
+
+    if (b >= 0.5) {
+
+        enemyShip.x = 0;
+        enemyShip.y = (Math.random() * 100) / 100 * gameHeight;
+    } else if (b < 0.5) {
+        enemyShip.rotation = Math.PI / 2;
+        enemyShip.x = (Math.random() * 100) / 100 * gameWidth;
+        enemyShip.y = 0;
+    }
+    gameScene.addChild(enemyShip);
+    enemyShips.push(enemyShip);
+}
