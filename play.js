@@ -25,7 +25,7 @@ document.getElementById("jeu").appendChild(app.view);
 
 //variables qui seront utilisées dans plusieurs fonctions
 var state;
-var introScene, menuScene, gameScene;
+var introScene, menuScene, gameScene, optionScene;
 var buttons_texture = [];
 var play, play_button, options_button, quit_button;
 var button_container, showName;
@@ -39,7 +39,6 @@ app.renderer.autoResize = true;
 //chargement des images de base pour affficher l'écran de chargement
 loader
     .add("lib/main menu/background_1.png")
-    .add("lib/main menu/background_2.png")
     .add("lib/main menu/title.png")
     .add("lib/main menu/loadingFrame.png")
     .add("lib/main menu/unloaded.png")
@@ -92,20 +91,38 @@ function preloading() {
 //Chargement tilesets et images du jeu : Fond, boutons, effets, animations, personnages, vaisseaux etc...
 function load() {
     loader
+        .add('bg 2', "lib/main menu/background_2.png")
+        //boutons menu
         .add('play button', "lib/main menu/buttons/play.png")
         .add('play hover button', "lib/main menu/buttons/play_hover.png")
         .add('options button', "lib/main menu/buttons/options.png")
         .add('options hover button', "lib/main menu/buttons/options_hover.png")
         .add('quit button', "lib/main menu/buttons/quit.png")
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
+        //vaisseaux
         .add('player ship', "lib/ships/player_ship.png")
         .add('enemy ship', "lib/ships/enemy_ship.png")
+        //laser
         .add('laser1', "lib/ships/particles/laser1.png")
         .add('laser2', "lib/ships/particles/laser2.png")
         .add('pew1', "lib/sounds/laser1.mp3")
+        //bar de vie
         .add('hb frame', "lib/HUD/hb_frame.png")
         .add('hb empty', "lib/HUD/hb_empty.png")
         .add('hb fill', "lib/HUD/hb_fill.png")
+        //difficultés
+        .add('easy', "lib/main menu/buttons/easy.png")
+        .add('medium', "lib/main menu/buttons/medium.png")
+        .add('hard', "lib/main menu/buttons/hard.png")
+        .add('very hard', "lib/main menu/buttons/veryhard.png")
+        .add('extreme', "lib/main menu/buttons/extreme.png")
+        //boutons options
+        .add('valid', "lib/main menu/textInput/valid.png")
+        .add('invalid', "lib/main menu/textInput/invalid.png")
+        .add('less', "lib/main menu/buttons/button_less.png")
+        .add('plus', "lib/main menu/buttons/button_plus.png")
+        .add('left', "lib/main menu/buttons/button_left.png")
+        .add('right', "lib/main menu/buttons/button_right.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
