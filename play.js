@@ -161,7 +161,7 @@ function setup() {
         fontSize: 60,
         fill: 'black'
     });
-
+    optionScene = new Container();
     menuScene = new Container();
     gameScene = new Container();
 
