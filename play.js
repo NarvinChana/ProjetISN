@@ -478,8 +478,6 @@ function initPlay() {
     ship = new Sprite();
     ship.texture = TextureCache['player ship'];
 
-    document.getElementById('jeu').style.cursor = 'none';
-
     keys = [];
     bullets = [];
     enemyBullets = [];
@@ -614,8 +612,8 @@ function play() {
     hbEmpty.height = 100 - healthPercent;
     if (healthPercent <= 0) {
         gameScene.visible = false;
-        state = "menu";
-        menu();
+        menuScene.visible = true;
+        title.visible = true;
     }
 
     //Actualisation du trajectoire des balles
