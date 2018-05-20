@@ -414,7 +414,7 @@ function initMenu() {
     VMLess.on("click", function () {
         VMLess.texture = TextureCache['less hover'];
         if (volumeMusic > 0) {
-            volumeMusic -= 1;
+            volumeMusic -= 10;
         }
         option();
         setTimeout(function () {
@@ -425,7 +425,7 @@ function initMenu() {
     VMMore.on("click", function () {
         VMMore.texture = TextureCache['plus hover'];
         if (volumeMusic < 100) {
-            volumeMusic += 1;
+            volumeMusic += 10;
         }
         option();
         setTimeout(function () {
@@ -436,7 +436,7 @@ function initMenu() {
     VELess.on("click", function () {
         VELess.texture = TextureCache['less hover'];
         if (volumeEffect > 0) {
-            volumeEffect -= 1;
+            volumeEffect -= 10;
         }
         option();
         setTimeout(function () {
@@ -447,7 +447,7 @@ function initMenu() {
     VEMore.on("click", function () {
         VEMore.texture = TextureCache['plus hover'];
         if (volumeEffect < 100) {
-            volumeEffect += 1;
+            volumeEffect += 10;
         }
         option();
         setTimeout(function () {
