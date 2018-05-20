@@ -53,30 +53,30 @@ loader
 function preloading() {
 
     //préchargement du fond de base (menu principal)
-    bg = new Sprite(resources["lib/main menu/background_2.png"].texture);
+    bg = new Sprite(TextureCache["lib/main menu/background_1.png"]);
     bg.width = gameWidth;
     bg.height = gameHeight;
 
     //préchargement de l'image du titre
-    title = new Sprite(resources["lib/main menu/title.png"].texture);
+    title = new Sprite(TextureCache["lib/main menu/title.png"]);
     title.width = gameWidth * 70 / 100;
     title.height = gameHeight * 20 / 100;
     title.x = gameWidth / 2 - title.width / 2;
     title.y = 7 / 100 * gameHeight;
 
-    loadFrame = new Sprite(resources["lib/main menu/loadingFrame.png"].texture);
+    loadFrame = new Sprite(TextureCache["lib/main menu/loadingFrame.png"]);
     loadFrame.width = gameWidth * 80 / 100;
     loadFrame.height = loadFrame.width / 7.5;
     loadFrame.x = gameWidth / 2 - loadFrame.width / 2;
     loadFrame.y = 75 / 100 * gameHeight;
 
-    unloaded = new Sprite(resources["lib/main menu/unloaded.png"].texture);
+    unloaded = new Sprite(TextureCache["lib/main menu/unloaded.png"]);
     unloaded.width = gameWidth * 80 / 100;
     unloaded.height = unloaded.width / 7.5;
     unloaded.x = gameWidth / 2 - unloaded.width / 2;
     unloaded.y = 75 / 100 * gameHeight;
 
-    loaded = new Sprite(resources["lib/main menu/loaded.png"].texture);
+    loaded = new Sprite(TextureCache["lib/main menu/loaded.png"]);
     loaded.width = gameWidth * 80 / 100;
     loaded.height = loaded.width / 7.5;
     loaded.x = gameWidth / 2 - loaded.width / 2;
@@ -469,7 +469,7 @@ function option() {
     menuMusic.volume = volumeMusic / 100;
     volumeMusicText.text = volumeMusic + "%";
     volumeEffectText.text = volumeEffect + "%";
-    
+
 }
 
 function initPlay() {
@@ -609,15 +609,15 @@ function play() {
     //avancement du vaisseau
     ship.x += Math.cos(ship.rotation) * vel;
     ship.y += Math.sin(ship.rotation) * vel;
-    
+
     //Actualisation de la barre de vie
-    hbEmpty.height = 100-healthPercent;
-    if(healthPercent <= 0){
+    hbEmpty.height = 100 - healthPercent;
+    if (healthPercent <= 0) {
         gameScene.visible = false;
         state = "menu";
         menu();
     }
-    
+
     //Actualisation du trajectoire des balles
     for (var b = bullets.length - 1; b >= 0; b--) {
         bullets[b].x += Math.cos(bullets[b].rotation) * bulletSpeed;
@@ -719,6 +719,7 @@ function checkBoundaries(object) {
         object.y = 0;
     }
 }
+
 function createEnemy() {
     var b = Math.random();
     var enemyShip = new Sprite();
