@@ -41,7 +41,8 @@ app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
 loader
-    .add("lib/main menu/background_2.png")
+    .add('bg 1', "lib/main menu/background_1.png")
+    .add('bg 2', "lib/main menu/background_2.png")
     .add("lib/main menu/title.png")
     .add("lib/main menu/loadingFrame.png")
     .add("lib/main menu/unloaded.png")
@@ -94,7 +95,6 @@ function preloading() {
 //Chargement tilesets et images du jeu : Fond, boutons, effets, animations, personnages, vaisseaux etc...
 function load() {
     loader
-        .add('bg 1', "lib/main menu/background_1.png")
         //boutons menu
         .add('play button', "lib/main menu/buttons/play.png")
         .add('play hover button', "lib/main menu/buttons/play_hover.png")
@@ -482,9 +482,11 @@ function initPlay() {
 
     keys = [];
     bullets = [];
+    enemyBullets = [];
     enemyShips = [];
 
     bulletSpeed = 15;
+    enemyBulletSpeed = 6;
 
     rotateValue = 0;
     rotateLeft = -2;
@@ -585,7 +587,7 @@ function play() {
     if (keys[32]) {
         shootDelay++;
         if (shootDelay % 10 === 0) {
-            shoot(ship, 1);
+            shoot(ship);
             PIXI.sound.play('pew1');
         }
     }
@@ -623,78 +625,87 @@ function play() {
         if (bullets[b].x < 0 || bullets[b].x > gameWidth || bullets[b].y < 0 || bullets[b].y > gameHeight) {
             gameScene.removeChild(bullets[b]);
         }
-        if (hitTestRectangle(ship, bullets[b]) == true) {
-            healthPercent -= 10;
-        }
         for (var d = enemyShips.length - 1; d >= 0; d--) {
             if (hitTestRectangle(enemyShips[d], bullets[b]) == true) {
                 gameScene.removeChild(enemyShips[d]);
                 enemyShips.splice(d, 1)
+                gameScene.removeChild(bullets[b]);
             }
         }
     }
 
+    //déplacement des balles ennemis
+    for (var b = enemyBullets.length - 1; b >= 0; b--) {
+        enemyBullets[b].x += Math.cos(enemyBullets[b].rotation) * enemyBulletSpeed;
+        enemyBullets[b].y += Math.sin(enemyBullets[b].rotation) * enemyBulletSpeed;
+        if (hitTestRectangle(ship, enemyBullets[b]) == true) {
+            healthPercent -= 10;
+            gameScene.removeChild(enemyBullets[b]);
+            enemyBullets.splice(b, 1);
+        }
+    }
+
+    //création d'un vaisseau ennemi s'il n'y en a aucun
     if (enemyShips.length == 0) {
         createEnemy();
     }
 
-    //if (healthPercent == 0) {
-    //    gameScene.removeChild(ship);
-    //}
+    //élimination du joueur s'il n'a plus d'hp
+    if (healthPercent == 0) {
+        gameScene.removeChild(ship);
+    }
 
+    //réglage de la difficulté
     if (difficulty == "facile") {
-        if (c >= 0.99 && enemyShips.length < 20) {
+        if (c >= 0.99 && enemyShips.length < 10) {
             createEnemy();
-        }
-        for (var b = enemyShips.length - 1; b >= 0; b--) {
-            var randShoot = Math.random();
-            if (Math.random <= 0.15) {
-                shoot(enemyShips[b], 2);
-            }
         }
     } else if (difficulty == "difficile") {
         if (c >= 0.98 && enemyShips.length < 40) {
             createEnemy();
         }
-        for (var b = enemyShips.length - 1; b >= 0; b--) {
-            var randShoot = Math.random();
-            if (Math.random <= 0.25) {
-                shoot(enemyShips[b], 2);
-            }
-        }
     }
 
     checkBoundaries(ship);
 
+    //déplacement des vaisseaux ennemis
     for (var b = enemyShips.length - 1; b >= 0; b--) {
-        checkBoundaries(enemyShips[b]);
         enemyShips[b].x += Math.cos(enemyShips[b].rotation) * enemySpeed;
         enemyShips[b].y += Math.sin(enemyShips[b].rotation) * enemySpeed;
-        if (enemyShips[b].x < 0 || enemyShips[b].x > gameWidth || enemyShips[b].y < 0 || enemyShips[b].y > gameHeight) {
-            gameScene.removeChild(enemyShips[b]);
-        }
+        checkBoundaries(enemyShips[b]);
         var randTrajectory = Math.random();
         if (randTrajectory >= 0.60) {
             enemyShips[b].rotation += 0.03;
         } else if (randTrajectory <= 0.40) {
             enemyShips[b].rotation -= 0.03;
         }
+        var randShoot = Math.random();
+        if (randShoot <= 0.02) {
+            enemyShoot(enemyShips[b]);
+        }
     }
 }
 
-function shoot(startPosition, laser) {
+function shoot(startPosition) {
     var bullet = new Sprite();
-    if (laser == 1) {
-        bullet.texture = TextureCache['laser1'];
-    } else if (laser == 2) {
-        bullet.texture = TextureCache['laser2'];
-    }
+    bullet.texture = TextureCache['laser1'];
     bullet.scale.set(0.1, 0.1);
     bullet.x = startPosition.x;
     bullet.y = startPosition.y;
     bullet.rotation = startPosition.rotation;
     gameScene.addChild(bullet);
     bullets.push(bullet);
+}
+
+function enemyShoot(startPosition) {
+    var enemyBullet = new Sprite();
+    enemyBullet.texture = TextureCache['laser2'];
+    enemyBullet.scale.set(0.1, 0.1);
+    enemyBullet.x = startPosition.x;
+    enemyBullet.y = startPosition.y;
+    enemyBullet.rotation = startPosition.rotation;
+    gameScene.addChild(enemyBullet);
+    enemyBullets.push(enemyBullet);
 }
 
 function checkBoundaries(object) {
@@ -708,7 +719,6 @@ function checkBoundaries(object) {
         object.y = 0;
     }
 }
-
 function createEnemy() {
     var b = Math.random();
     var enemyShip = new Sprite();
