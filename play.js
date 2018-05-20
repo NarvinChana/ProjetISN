@@ -397,7 +397,6 @@ function initMenu() {
         back_button.texture = TextureCache['back'];
     });
 
-
     optionScene.addChild(back_button, optionFrame, optionTitle, volumeMusicDesc, volumeEffectDesc, button_container_option, volumeMusicText, volumeEffectText);
     app.stage.addChild(optionScene);
     optionScene.visible = false;
@@ -588,13 +587,11 @@ function play() {
             PIXI.sound.play('pew1');
         }
     }
-
     //boost
     if (keys[66]) {
         ship.scale.set(0.1, 0.1);
         vel += 2;
         bulletSpeed = 20;
-        healthPercent--;
     } else if (keys[66] === false) {
         ship.scale.set(0.18, 0.18);
         bulletSpeed = 15;
@@ -606,14 +603,6 @@ function play() {
     //avancement du vaisseau
     ship.x += Math.cos(ship.rotation) * vel;
     ship.y += Math.sin(ship.rotation) * vel;
-
-    //Actualisation de la barre de vie
-    hbEmpty.height = 100 - healthPercent;
-    if (healthPercent <= 0) {
-        gameScene.visible = false;
-        menuScene.visible = true;
-        title.visible = true;
-    }
 
     //Actualisation du trajectoire des balles
     for (var b = bullets.length - 1; b >= 0; b--) {
@@ -636,20 +625,27 @@ function play() {
         enemyBullets[b].x += Math.cos(enemyBullets[b].rotation) * enemyBulletSpeed;
         enemyBullets[b].y += Math.sin(enemyBullets[b].rotation) * enemyBulletSpeed;
         if (hitTestRectangle(ship, enemyBullets[b]) == true) {
-            healthPercent -= 10;
+            healthPercent -= 1;
             gameScene.removeChild(enemyBullets[b]);
             enemyBullets.splice(b, 1);
         }
     }
 
+    //Actualisation de la barre de vie
+    hbPercent.text = healthPercent + "%";
+    hbEmpty.height = (100 - healthPercent) / 100 * hbFill.height;
+    if (healthPercent == 0) {
+        gameScene.visible = false;
+        menuScene.visible = true;
+        title.visible = true;
+        document.getElementById("gameMusic1").pause;
+        document.getElementById("gameMusic1").setTime
+    }
+
+
     //création d'un vaisseau ennemi s'il n'y en a aucun
     if (enemyShips.length == 0) {
         createEnemy();
-    }
-
-    //élimination du joueur s'il n'a plus d'hp
-    if (healthPercent == 0) {
-        gameScene.removeChild(ship);
     }
 
     //réglage de la difficulté
