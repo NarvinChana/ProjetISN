@@ -120,8 +120,8 @@ function load() {
         .add('very hard', "lib/main menu/buttons/veryhard.png")
         .add('extreme', "lib/main menu/buttons/extreme.png")
         //boutons options
-        .add('option frame', "lib/main menu/buttons/optionFrame.png")
-        .add('option title', "lib/main menu/optionTitle.png")
+        .add('option frame', "lib/main menu/buttons/option_frame.png")
+        //.add('option title', "lib/main menu/optionTitle.png")
         .add('valid', "lib/main menu/textInput/valid.png")
         .add('invalid', "lib/main menu/textInput/invalid.png")
         .add('less', "lib/main menu/buttons/button_less.png")
