@@ -27,18 +27,21 @@ document.getElementById("jeu").appendChild(app.view);
 var state;
 var introScene, menuScene, gameScene, optionScene;
 var buttons_texture = [];
-var play, play_button, options_button, quit_button;
+var play, play_button, options_button, quit_button, back_button;
 var button_container, showName;
 var text, profileName = " ",
     validValue;
 var healthPercent = 100;
 var bg, title;
+var menuMusic = document.getElementById("menuMusic");
 var difficulty = "facile";
+var volumeMusic = 50,
+    volumeEffect = 50;
 app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
 loader
-    .add("lib/main menu/background_1.png")
+    .add("lib/main menu/background_2.png")
     .add("lib/main menu/title.png")
     .add("lib/main menu/loadingFrame.png")
     .add("lib/main menu/unloaded.png")
@@ -49,7 +52,7 @@ loader
 function preloading() {
 
     //préchargement du fond de base (menu principal)
-    bg = new Sprite(resources["lib/main menu/background_1.png"].texture);
+    bg = new Sprite(resources["lib/main menu/background_2.png"].texture);
     bg.width = gameWidth;
     bg.height = gameHeight;
 
@@ -91,7 +94,7 @@ function preloading() {
 //Chargement tilesets et images du jeu : Fond, boutons, effets, animations, personnages, vaisseaux etc...
 function load() {
     loader
-        .add('bg 2', "lib/main menu/background_2.png")
+        .add('bg 1', "lib/main menu/background_1.png")
         //boutons menu
         .add('play button', "lib/main menu/buttons/play.png")
         .add('play hover button', "lib/main menu/buttons/play_hover.png")
@@ -117,14 +120,21 @@ function load() {
         .add('very hard', "lib/main menu/buttons/veryhard.png")
         .add('extreme', "lib/main menu/buttons/extreme.png")
         //boutons options
+        .add('option frame', "lib/main menu/buttons/optionFrame.png")
+        .add('option title', "lib/main menu/optionTitle.png")
         .add('valid', "lib/main menu/textInput/valid.png")
         .add('invalid', "lib/main menu/textInput/invalid.png")
         .add('less', "lib/main menu/buttons/button_less.png")
+        .add('less hover', "lib/main menu/buttons/button_less_hover.png")
         .add('plus', "lib/main menu/buttons/button_plus.png")
+        .add('plus hover', "lib/main menu/buttons/button_plus_hover.png")
         .add('left', "lib/main menu/buttons/button_left.png")
         .add('right', "lib/main menu/buttons/button_right.png")
-        .add('theme1' "lib/main menu/buttons/theme_orangespace.png")
-        .add('theme2' "lib/main menu/buttons/theme_darkspace.png")
+        .add('back', "lib/main menu/buttons/back.png")
+        .add('back hover', "lib/main menu/buttons/back_hover.png")
+        .add('empty', "lib/main menu/buttons/button_empty.png")
+        .add('theme1', "lib/main menu/buttons/theme_orangespace.png")
+        .add('theme2', "lib/main menu/buttons/theme_darkspace.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
@@ -181,6 +191,9 @@ function gameLoop() {
             break;
         case "play":
             play();
+            break;
+        case "option":
+            option();
             break;
     }
     window.requestAnimationFrame(gameLoop);
@@ -265,20 +278,198 @@ function initMenu() {
     options_button.on("click", function () {
         title.visible = false;
         menuScene.visible = false;
+        optionScene.visible = true;
+        option();
+        state = "option";
     })
     quit_button.on("click", function () {
         location.reload();
     })
 
     document.getElementById("menuMusic").play();
-}
 
+    // OPTION MENU INITIALISATION /!\ ==============================================================
+
+    optionFrame = new Sprite();
+    optionTitle = new Sprite();
+    back_button = new Sprite();
+    VMLess = new Sprite();
+    VMFrame = new Sprite();
+    VMMore = new Sprite();
+    VELess = new Sprite();
+    VEFrame = new Sprite();
+    VEMore = new Sprite();
+
+    button_container_option = new Container();
+    button_container_option.addChild(VMLess, VELess, VMMore, VEMore, VMFrame, VEFrame);
+    //sprites
+    optionFrame.texture = TextureCache['option frame'];
+    optionFrame.width = gameWidth * 60 / 100;
+    optionFrame.height = gameHeight * 50 / 100;
+    optionFrame.x = gameWidth * 20 / 100;
+    optionFrame.y = 30 / 100 * gameHeight;
+
+    optionTitle.texture = TextureCache['options button'];
+    optionTitle.width = gameWidth * 40 / 100;
+    optionTitle.height = gameHeight * 20 / 100;
+    optionTitle.x = gameWidth * 30 / 100;
+    optionTitle.y = 5 / 100 * gameHeight;
+
+    back_button.texture = TextureCache['back'];
+    back_button.width = gameWidth * 16 / 100;
+    back_button.height = gameHeight * 8 / 100;
+    back_button.x = gameWidth * 42 / 100;
+    back_button.y = gameHeight * 84 / 100;
+    back_button.interactive = true;
+
+    //description
+    volumeMusicDesc = new Text("Regle le volume sonore de la musique ", {
+        fontFamily: 'PixelOperator',
+        fontSize: 40,
+        fill: 'black'
+    });
+    volumeMusicText = new Text(volumeMusic + "%", {
+        fontFamily: 'PixelOperator',
+        fontSize: 55,
+        fill: 'black'
+    });
+
+    volumeEffectDesc = new Text("Regle le volume sonore des effets ", {
+        fontFamily: 'PixelOperator',
+        fontSize: 40,
+        fill: 'black'
+    });
+    volumeEffectText = new Text(volumeEffect + "%", {
+        fontFamily: 'PixelOperator',
+        fontSize: 60,
+        fill: 'black'
+    });
+
+    //position
+    volumeMusicDesc.x = gameWidth * 23 / 100;
+    volumeMusicDesc.y = 35 / 100 * gameHeight;
+
+    volumeEffectDesc.x = gameWidth * 23 / 100;
+    volumeEffectDesc.y = 45 / 100 * gameHeight;
+
+    for (var i = 0; i < 4; i++) {
+        button_container_option.getChildAt(i).interactive = true;
+        if (i === 0 || i === 1) {
+            button_container_option.getChildAt(i).texture = TextureCache['less'];
+            button_container_option.getChildAt(i).x = optionFrame.x + 2 / 3 * optionFrame.width;
+        } else {
+            button_container_option.getChildAt(i).texture = TextureCache['plus'];
+        }
+        if (i === 0 || i === 2) {
+            button_container_option.getChildAt(i).y = volumeMusicDesc.y;
+        } else {
+            button_container_option.getChildAt(i).y = volumeEffectDesc.y;
+        }
+        button_container_option.getChildAt(i).width = 5 / 100 * gameHeight;
+        button_container_option.getChildAt(i).height = 5 / 100 * gameHeight;
+    }
+
+    VMFrame.texture = TextureCache['empty'];
+    VMFrame.width = 10 / 100 * gameWidth;
+    VMFrame.height = 5 / 100 * gameHeight;
+    VMFrame.x = VMLess.x + 1.5 * VMLess.width;
+    VMFrame.y = volumeMusicDesc.y
+
+    VMMore.x = VMFrame.x + VMFrame.width + .5 * VMLess.width;
+
+    VEFrame.texture = TextureCache['empty'];
+    VEFrame.width = 10 / 100 * gameWidth;
+    VEFrame.height = 5 / 100 * gameHeight;
+    VEFrame.x = VELess.x + 1.5 * VELess.width;
+    VEFrame.y = volumeEffectDesc.y
+
+    VEMore.x = VEFrame.x + VEFrame.width + .5 * VELess.width;
+
+    volumeMusicText.x = (VMFrame.x + VMFrame.width / 2) - volumeMusicText.width / 2.5;
+    volumeMusicText.y = (volumeMusicDesc.y + volumeMusicDesc.height / 2) - volumeMusicText.height / 2.5;
+    volumeEffectText.x = (VEFrame.x + VEFrame.width / 2) - volumeEffectText.width / 2.5;
+    volumeEffectText.y = (volumeEffectDesc.y + volumeEffectDesc.height / 2) - volumeEffectText.height / 2.5;
+
+    //event when hover
+    back_button.on('mouseover', function () {
+        back_button.texture = TextureCache['back hover'];
+    });
+    back_button.on('mouseout', function () {
+        back_button.texture = TextureCache['back'];
+    });
+
+
+    optionScene.addChild(back_button, optionFrame, optionTitle, volumeMusicDesc, volumeEffectDesc, button_container_option, volumeMusicText, volumeEffectText);
+    app.stage.addChild(optionScene);
+    optionScene.visible = false;
+
+    //triggers
+    back_button.on("click", function () {
+        optionScene.visible = false;
+        title.visible = true;
+        menuScene.visible = true;
+        menu();
+        state = "menu";
+    });
+    VMLess.on("click", function () {
+        VMLess.texture = TextureCache['less hover'];
+        if (volumeMusic > 0) {
+            volumeMusic -= 1;
+        }
+        option();
+        setTimeout(function () {
+            VMLess.texture = TextureCache['less'];
+        }, 100);
+
+    });
+    VMMore.on("click", function () {
+        VMMore.texture = TextureCache['plus hover'];
+        if (volumeMusic < 100) {
+            volumeMusic += 1;
+        }
+        option();
+        setTimeout(function () {
+            VMMore.texture = TextureCache['plus'];
+        }, 100);
+
+    });
+    VELess.on("click", function () {
+        VELess.texture = TextureCache['less hover'];
+        if (volumeEffect > 0) {
+            volumeEffect -= 1;
+        }
+        option();
+        setTimeout(function () {
+            VELess.texture = TextureCache['less'];
+        }, 100);
+
+    });
+    VEMore.on("click", function () {
+        VEMore.texture = TextureCache['plus hover'];
+        if (volumeEffect < 100) {
+            volumeEffect += 1;
+        }
+        option();
+        setTimeout(function () {
+            VEMore.texture = TextureCache['plus'];
+        }, 100);
+
+    });
+}
 //Tout le code du menu principal est placé ici
 function menu() {
 
     if (document.getElementById('inputbox') != null) {
         profileName = document.getElementById('inputbox').value;
     }
+}
+
+
+function option() {
+    menuMusic.volume = volumeMusic / 100;
+    volumeMusicText.text = volumeMusic + "%";
+    volumeEffectText.text = volumeEffect + "%";
+    
 }
 
 function initPlay() {
@@ -404,6 +595,7 @@ function play() {
         ship.scale.set(0.1, 0.1);
         vel += 2;
         bulletSpeed = 20;
+        healthPercent--;
     } else if (keys[66] === false) {
         ship.scale.set(0.18, 0.18);
         bulletSpeed = 15;
@@ -415,7 +607,15 @@ function play() {
     //avancement du vaisseau
     ship.x += Math.cos(ship.rotation) * vel;
     ship.y += Math.sin(ship.rotation) * vel;
-
+    
+    //Actualisation de la barre de vie
+    hbEmpty.height = 100-healthPercent;
+    if(healthPercent <= 0){
+        gameScene.visible = false;
+        state = "menu";
+        menu();
+    }
+    
     //Actualisation du trajectoire des balles
     for (var b = bullets.length - 1; b >= 0; b--) {
         bullets[b].x += Math.cos(bullets[b].rotation) * bulletSpeed;
