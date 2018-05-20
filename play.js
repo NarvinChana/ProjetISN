@@ -31,7 +31,6 @@ var play, play_button, options_button, quit_button, back_button;
 var button_container, showName;
 var text, profileName = " ",
     validValue;
-var healthPercent = 100;
 var bg, title;
 var menuMusic = document.getElementById("menuMusic");
 var difficulty = "facile";
@@ -496,7 +495,7 @@ function initPlay() {
     accelMax = 5;
     accelMin = -5;
 
-    shipHealth = 100;
+    healthPercent = 100;
     ship.scale.set(0.18, 0.18);
     ship.x = gameWidth / 2 - ship.width / 2;
     ship.y = gameHeight / 2 - ship.height / 2;
