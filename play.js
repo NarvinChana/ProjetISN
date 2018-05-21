@@ -322,25 +322,25 @@ function initMenu() {
     back_button.interactive = true;
 
     //description
-    volumeMusicDesc = new Text("Regle le volume sonore de la musique ", {
+    volumeMusicDesc = new Text("Volume Musique ", {
         fontFamily: 'PixelOperator',
         fontSize: 40,
         fill: 'black'
     });
     volumeMusicText = new Text(volumeMusic + "%", {
         fontFamily: 'PixelOperator',
-        fontSize: 55,
+        fontSize: 40,
         fill: 'black'
     });
 
-    volumeEffectDesc = new Text("Regle le volume sonore des effets ", {
+    volumeEffectDesc = new Text("Volume Effets ", {
         fontFamily: 'PixelOperator',
         fontSize: 40,
         fill: 'black'
     });
     volumeEffectText = new Text(volumeEffect + "%", {
         fontFamily: 'PixelOperator',
-        fontSize: 60,
+        fontSize: 40,
         fill: 'black'
     });
 
@@ -385,9 +385,9 @@ function initMenu() {
     VEMore.x = VEFrame.x + VEFrame.width + .5 * VELess.width;
 
     volumeMusicText.x = (VMFrame.x + VMFrame.width / 2) - volumeMusicText.width / 2.5;
-    volumeMusicText.y = (volumeMusicDesc.y + volumeMusicDesc.height / 2) - volumeMusicText.height / 2.5;
+    volumeMusicText.y = (volumeMusicDesc.y + volumeMusicDesc.height / 2) - volumeMusicText.height / 2.0;
     volumeEffectText.x = (VEFrame.x + VEFrame.width / 2) - volumeEffectText.width / 2.5;
-    volumeEffectText.y = (volumeEffectDesc.y + volumeEffectDesc.height / 2) - volumeEffectText.height / 2.5;
+    volumeEffectText.y = (volumeEffectDesc.y + volumeEffectDesc.height / 2) - volumeEffectText.height / 2.0;
 
     //event when hover
     back_button.on('mouseover', function () {
@@ -494,6 +494,7 @@ function initPlay() {
     accelMax = 5;
     accelMin = -5;
 
+    playerScore = 0;
     healthPercent = 100;
     ship.scale.set(0.18, 0.18);
     ship.x = gameWidth / 2 - ship.width / 2;
@@ -510,13 +511,6 @@ function initPlay() {
     hbEmpty = new Sprite();
     hbFill = new Sprite();
     hbPercent = new Text();
-
-    //mise en place de la barre de vie
-    hbPercent.text = healthPercent + "%", {
-        fontFamily: 'PixelOperator8-Bold',
-        fontSize: 60,
-        fill: 'black'
-    };
 
     hbFrame.texture = TextureCache['hb frame'];
     hbFrame.width = gameWidth * 5 / 100;
@@ -541,6 +535,10 @@ function initPlay() {
     hbPercent.width = hbFrame.width;
     hbPercent.height = gameHeight * 6 / 100;
 
+    score = new Text();
+    score.x = gameWidth * 80 / 100;
+    score.y = gameHeight * 5 / 100;
+
     document.body.addEventListener("keydown", function (e) {
         keys[e.keyCode] = true;
     });
@@ -550,7 +548,7 @@ function initPlay() {
 
     document.getElementById("gameMusic1").play();
 
-    gameScene.addChild(ship, hbFill, hbEmpty, hbFrame, hbPercent);
+    gameScene.addChild(ship, hbFill, hbEmpty, hbFrame, hbPercent, score);
 
     app.stage.addChild(gameScene);
 }
@@ -616,6 +614,7 @@ function play() {
                 gameScene.removeChild(enemyShips[d]);
                 enemyShips.splice(d, 1)
                 gameScene.removeChild(bullets[b]);
+                playerScore += 100;
             }
         }
     }
@@ -631,8 +630,19 @@ function play() {
         }
     }
 
+    //Actualisation du score
+    score.text = "Score: " + playerScore, {
+        fontFamily: 'PixelOperator',
+        fontSize: 45,
+        fill: 'black'
+    };
+
     //Actualisation de la barre de vie
-    hbPercent.text = healthPercent + "%";
+    hbPercent.text = healthPercent + "%", {
+        fontFamily: 'PixelOperator8-Bold',
+        fontSize: 60,
+        fill: 'black'
+    };
     hbEmpty.height = (100 - healthPercent) / 100 * hbFill.height;
     if (healthPercent == 0) {
         gameScene.visible = false;
