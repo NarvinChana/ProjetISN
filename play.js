@@ -26,7 +26,8 @@ document.getElementById("jeu").appendChild(app.view);
 //variables qui seront utilisées dans plusieurs fonctions
 var state;
 var introScene, menuScene, gameScene, optionScene;
-var buttons_texture = [];
+var buttons_texture = [], themes = [];
+var themeSel = 0;
 var play, play_button, options_button, quit_button, back_button;
 var button_container, showName;
 var text, profileName = " ",
@@ -119,7 +120,7 @@ function load() {
         .add('very hard', "lib/main menu/buttons/veryhard.png")
         .add('extreme', "lib/main menu/buttons/extreme.png")
         //boutons options
-        .add('option frame', "lib/main menu/buttons/option_frame.png")
+        .add('option frame', "lib/main menu/buttons/optionFrame.png")
         //.add('option title', "lib/main menu/optionTitle.png")
         .add('valid', "lib/main menu/textInput/valid.png")
         .add('invalid', "lib/main menu/textInput/invalid.png")
@@ -128,7 +129,9 @@ function load() {
         .add('plus', "lib/main menu/buttons/button_plus.png")
         .add('plus hover', "lib/main menu/buttons/button_plus_hover.png")
         .add('left', "lib/main menu/buttons/button_left.png")
+        .add('left hover', "lib/main menu/buttons/button_left_hover.png")
         .add('right', "lib/main menu/buttons/button_right.png")
+        .add('right hover', "lib/main menu/buttons/button_right_hover.png")
         .add('back', "lib/main menu/buttons/back.png")
         .add('back hover', "lib/main menu/buttons/back_hover.png")
         .add('empty', "lib/main menu/buttons/button_empty.png")
@@ -298,9 +301,25 @@ function initMenu() {
     VELess = new Sprite();
     VEFrame = new Sprite();
     VEMore = new Sprite();
+    themeFrame = new Sprite;
+    themeLeft = new Sprite();
+    themeRight = new Sprite();
 
+    themes = [
+        TextureCache["lib/main menu/buttons/theme_orangespace.png"],
+        TextureCache["lib/main menu/buttons/theme_darkspace.png"]/*,
+        TextureCache["lib/main menu/buttons/easy.png"],
+        TextureCache["lib/main menu/buttons/medium.png"],
+        TextureCache["lib/main menu/buttons/hard.png"],
+        TextureCache["lib/main menu/buttons/veryhard.png"],
+        TextureCache["lib/main menu/buttons/extreme.png"],*/
+    ]
+    
     button_container_option = new Container();
-    button_container_option.addChild(VMLess, VELess, VMMore, VEMore, VMFrame, VEFrame);
+    button_container_option.addChild(VMLess, VELess, VMMore, VEMore, VMFrame, VEFrame, themeLeft, themeRight);
+    button_container_option_2 = new Container();
+    button_container_option_2.addChild(VMFrame, VEFrame, themeFrame);
+
     //sprites
     optionFrame.texture = TextureCache['option frame'];
     optionFrame.width = gameWidth * 60 / 100;
@@ -322,72 +341,96 @@ function initMenu() {
     back_button.interactive = true;
 
     //description
-    volumeMusicDesc = new Text("Volume Musique ", {
+    VMDesc = new Text("Volume Musique ", {
         fontFamily: 'PixelOperator',
         fontSize: 40,
         fill: 'black'
     });
-    volumeMusicText = new Text(volumeMusic + "%", {
+    VMText = new Text(volumeMusic + "%", {
         fontFamily: 'PixelOperator',
         fontSize: 40,
         fill: 'black'
     });
 
-    volumeEffectDesc = new Text("Volume Effets ", {
+    VEDesc = new Text("Volume Effets ", {
         fontFamily: 'PixelOperator',
         fontSize: 40,
         fill: 'black'
     });
-    volumeEffectText = new Text(volumeEffect + "%", {
+    VEText = new Text(volumeEffect + "%", {
+        fontFamily: 'PixelOperator',
+        fontSize: 40,
+        fill: 'black'
+    });
+
+    themeDesc = new Text("Thème ", {
         fontFamily: 'PixelOperator',
         fontSize: 40,
         fill: 'black'
     });
 
     //position
-    volumeMusicDesc.x = gameWidth * 23 / 100;
-    volumeMusicDesc.y = 35 / 100 * gameHeight;
+    VMDesc.x = gameWidth * 23 / 100;
+    VMDesc.y = 35 / 100 * gameHeight;
 
-    volumeEffectDesc.x = gameWidth * 23 / 100;
-    volumeEffectDesc.y = 45 / 100 * gameHeight;
+    VEDesc.x = gameWidth * 23 / 100;
+    VEDesc.y = 45 / 100 * gameHeight;
 
-    for (var i = 0; i < 4; i++) {
+    themeDesc.x = gameWidth * 23 / 100;
+    themeDesc.y = 55 / 100 * gameHeight;
+
+    for (var i = 0; i < 6; i++) {
         button_container_option.getChildAt(i).interactive = true;
+        button_container_option.getChildAt(i).width = 5 / 100 * gameHeight;
+        button_container_option.getChildAt(i).height = 5 / 100 * gameHeight;
+
         if (i === 0 || i === 1) {
             button_container_option.getChildAt(i).texture = TextureCache['less'];
             button_container_option.getChildAt(i).x = optionFrame.x + 2 / 3 * optionFrame.width;
-        } else {
+        } else if (i === 2 || i === 3) {
             button_container_option.getChildAt(i).texture = TextureCache['plus'];
+        } else if (i === 4) {
+            button_container_option.getChildAt(i).texture = TextureCache['left'];
+            button_container_option.getChildAt(i).x = optionFrame.x + 2 / 3 * optionFrame.width;
+        } else {
+            button_container_option.getChildAt(i).texture = TextureCache['right'];
         }
         if (i === 0 || i === 2) {
-            button_container_option.getChildAt(i).y = volumeMusicDesc.y;
+            button_container_option.getChildAt(i).y = VMDesc.y;
+        } else if (i === 1 || i === 3) {
+            button_container_option.getChildAt(i).y = VEDesc.y;
         } else {
-            button_container_option.getChildAt(i).y = volumeEffectDesc.y;
+            button_container_option.getChildAt(i).y = themeDesc.y;
         }
-        button_container_option.getChildAt(i).width = 5 / 100 * gameHeight;
-        button_container_option.getChildAt(i).height = 5 / 100 * gameHeight;
     }
 
-    VMFrame.texture = TextureCache['empty'];
-    VMFrame.width = 10 / 100 * gameWidth;
-    VMFrame.height = 5 / 100 * gameHeight;
+    for (var i = 0; i < 3; i++) {
+        button_container_option_2.getChildAt(i).width = 10 / 100 * gameWidth;
+        button_container_option_2.getChildAt(i).height = 5 / 100 * gameHeight;
+        if (i !== 2) {
+            button_container_option_2.getChildAt(i).texture = TextureCache['empty'];
+        } else {
+            button_container_option_2.getChildAt(i).texture = TextureCache['theme1'];
+        }
+    }
+    
     VMFrame.x = VMLess.x + 1.5 * VMLess.width;
-    VMFrame.y = volumeMusicDesc.y
-
+    VMFrame.y = VMDesc.y;
     VMMore.x = VMFrame.x + VMFrame.width + .5 * VMLess.width;
 
-    VEFrame.texture = TextureCache['empty'];
-    VEFrame.width = 10 / 100 * gameWidth;
-    VEFrame.height = 5 / 100 * gameHeight;
     VEFrame.x = VELess.x + 1.5 * VELess.width;
-    VEFrame.y = volumeEffectDesc.y
-
+    VEFrame.y = VEDesc.y;
     VEMore.x = VEFrame.x + VEFrame.width + .5 * VELess.width;
 
-    volumeMusicText.x = (VMFrame.x + VMFrame.width / 2) - volumeMusicText.width / 2.5;
-    volumeMusicText.y = (volumeMusicDesc.y + volumeMusicDesc.height / 2) - volumeMusicText.height / 2.0;
-    volumeEffectText.x = (VEFrame.x + VEFrame.width / 2) - volumeEffectText.width / 2.5;
-    volumeEffectText.y = (volumeEffectDesc.y + volumeEffectDesc.height / 2) - volumeEffectText.height / 2.0;
+    themeFrame.x = themeLeft.x + 1.5 * themeLeft.width;
+    themeFrame.y = themeLeft.y;
+    themeRight.x = themeFrame.x + themeFrame.width + .5 * themeLeft.width;
+
+    VMText.x = (VMFrame.x + VMFrame.width / 2) - VMText.width / 2.5;
+    VMText.y = (VMDesc.y + VMDesc.height / 2) - VMText.height / 2.5;
+
+    VEText.x = (VEFrame.x + VEFrame.width / 2) - VEText.width / 2.5;
+    VEText.y = (VEDesc.y + VEDesc.height / 2) - VEText.height / 2.5;
 
     //event when hover
     back_button.on('mouseover', function () {
@@ -397,7 +440,18 @@ function initMenu() {
         back_button.texture = TextureCache['back'];
     });
 
-    optionScene.addChild(back_button, optionFrame, optionTitle, volumeMusicDesc, volumeEffectDesc, button_container_option, volumeMusicText, volumeEffectText);
+    optionScene.addChild(
+        back_button,
+        optionFrame,
+        optionTitle,
+        VMDesc,
+        VEDesc,
+        themeDesc,
+        button_container_option,
+        button_container_option_2,
+        VMText,
+        VEText,
+    );
     app.stage.addChild(optionScene);
     optionScene.visible = false;
 
@@ -418,7 +472,6 @@ function initMenu() {
         setTimeout(function () {
             VMLess.texture = TextureCache['less'];
         }, 100);
-
     });
     VMMore.on("click", function () {
         VMMore.texture = TextureCache['plus hover'];
@@ -429,7 +482,6 @@ function initMenu() {
         setTimeout(function () {
             VMMore.texture = TextureCache['plus'];
         }, 100);
-
     });
     VELess.on("click", function () {
         VELess.texture = TextureCache['less hover'];
@@ -440,7 +492,6 @@ function initMenu() {
         setTimeout(function () {
             VELess.texture = TextureCache['less'];
         }, 100);
-
     });
     VEMore.on("click", function () {
         VEMore.texture = TextureCache['plus hover'];
@@ -451,8 +502,32 @@ function initMenu() {
         setTimeout(function () {
             VEMore.texture = TextureCache['plus'];
         }, 100);
-
     });
+    themeLeft.on("click", function () {
+        themeLeft.texture = TextureCache['left hover'];
+        if(themeSel === 0){ 
+            themeSel = themes.length - 1;
+        }else{
+            themeSel--;
+        }
+        option();
+        setTimeout(function () {
+            themeLeft.texture = TextureCache['left'];
+        }, 100);
+    });
+    themeRight.on("click", function () {
+        themeRight.texture = TextureCache['right hover'];
+        if(themeSel === themes.length - 1){ 
+            themeSel = 0;
+        }else{
+            themeSel++;
+        }
+        option();
+        setTimeout(function () {
+            themeRight.texture = TextureCache['right'];
+        }, 100);
+    });
+    
 }
 //Tout le code du menu principal est placé ici
 function menu() {
@@ -465,8 +540,10 @@ function menu() {
 
 function option() {
     menuMusic.volume = volumeMusic / 100;
-    volumeMusicText.text = volumeMusic + "%";
-    volumeEffectText.text = volumeEffect + "%";
+    VMText.text = volumeMusic + "%";
+    VEText.text = volumeEffect + "%";
+    
+    themeFrame.texture = themes[themeSel];
 
 }
 
