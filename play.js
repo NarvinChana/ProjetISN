@@ -577,7 +577,7 @@ function initMenu() {
 	
     difficultyLeft.on("click", function () {
         difficultyLeft.texture = TextureCache['left hover'];
-        if(themeSel === 0){ 
+        if(difficultySel === 0){ 
             difficultySel = difficulties.length - 1;
         }else{
             difficultySel--;
@@ -641,10 +641,10 @@ function option() {
 			difficultyFrame.texture = TextureCache['very hard'];
 			difficulty = "très difficile";
 			break;
-		case 4:
+		/*case 4:
 			difficultyFrame.texture = TextureCache['extreme'];
 			difficulty = "extreme";
-			break;
+			break;*/
 	}			
 }		
 function initPlay() {
@@ -836,16 +836,34 @@ function play() {
     }
 
     //réglage de la difficulté
-    if (difficulty == "facile") {
-        if (c >= 0.99 && enemyShips.length < 10) {
+	switch (difficulty) {
+		case "facile":
+			if (c >= 0.99 && enemyShips.length < 10) {
             createEnemy();
-        }
-    } else if (difficulty == "difficile") {
-        if (c >= 0.98 && enemyShips.length < 40) {
+			}
+			break;	
+		case "moyen":
+			if (c >= 0.7 && enemyShips.length < 20) {
             createEnemy();
-        }
-    }
-
+			}
+			break;	
+		case "difficile":
+			if (c >= 0.5 && enemyShips.length < 25) {
+            createEnemy();
+			}
+			break;	
+		case "très difficile":	
+		if (c >= 0.3 && enemyShips.length < 30) {
+            createEnemy();
+			}
+			break;	
+		case "extreme":	
+		if (c >= 0.05 && enemyShips.length < 40) {
+            createEnemy();
+			}
+			break;	
+	}
+		
     checkBoundaries(ship);
 
     //déplacement des vaisseaux ennemis
