@@ -26,7 +26,7 @@ document.getElementById("jeu").appendChild(app.view);
 var state;
 var introScene, menuScene, gameScene, optionScene;
 var buttons_texture = [], themes = [], difficulties = [];
-var themeSel = 0;
+var themeSel = 0, difficultySel = 0;
 var play, play_button, options_button, quit_button, back_button;
 var button_container, showName;
 var text, profileName = " ",
@@ -330,15 +330,29 @@ function initMenu() {
 	]	
 	
     button_container_option = new Container();
-    button_container_option.addChild(VMLess, VELess, VMMore, VEMore, VMFrame, VEFrame, themeLeft, themeRight);
+    button_container_option.addChild(
+		VMLess, 
+		VELess, 
+		VMMore, 
+		VEMore, 
+		themeLeft, 
+		themeRight, 
+		difficultyLeft, 
+		difficultyRight
+	);
     button_container_option_2 = new Container();
-    button_container_option_2.addChild(VMFrame, VEFrame, themeFrame, difficultyLeft, difficultyRight, difficultyFrame);
+    button_container_option_2.addChild(
+		VMFrame, 
+		VEFrame, 
+		themeFrame, 
+		difficultyFrame
+	);
 
     //sprites
     optionFrame.texture = TextureCache['option frame'];
-    optionFrame.width = gameWidth * 60 / 100;
+    optionFrame.width = gameWidth * 75 / 100;
     optionFrame.height = gameHeight * 50 / 100;
-    optionFrame.x = gameWidth * 20 / 100;
+    optionFrame.x = gameWidth * 12.5 / 100;
     optionFrame.y = 30 / 100 * gameHeight;
 
     optionTitle.texture = TextureCache['options button'];
@@ -402,7 +416,7 @@ function initMenu() {
 	difficultyDesc.x = gameWidth * 23 / 100;
     difficultyDesc.y = 65 / 100 * gameHeight;
 	
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < 8; i++) {
         button_container_option.getChildAt(i).interactive = true;
         button_container_option.getChildAt(i).width = 5 / 100 * gameHeight;
         button_container_option.getChildAt(i).height = 5 / 100 * gameHeight;
@@ -412,30 +426,35 @@ function initMenu() {
             button_container_option.getChildAt(i).x = optionFrame.x + 2 / 3 * optionFrame.width;
         } else if (i === 2 || i === 3) {
             button_container_option.getChildAt(i).texture = TextureCache['plus'];
-        } else if (i === 4) {
+        } else if (i === 4 || i === 6) {
             button_container_option.getChildAt(i).texture = TextureCache['left'];
             button_container_option.getChildAt(i).x = optionFrame.x + 2 / 3 * optionFrame.width;
         } else {
             button_container_option.getChildAt(i).texture = TextureCache['right'];
         }
+		
         if (i === 0 || i === 2) {
             button_container_option.getChildAt(i).y = VMDesc.y;
         } else if (i === 1 || i === 3) {
             button_container_option.getChildAt(i).y = VEDesc.y;
-        } else {
+        } else  if(i === 4 || i === 5 ){
             button_container_option.getChildAt(i).y = themeDesc.y;
-        }
+        } else { 
+			button_container_option.getChildAt(i).y = difficultyDesc.y;
+		}
     }
 
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 4; i++) {
         button_container_option_2.getChildAt(i).width = 10 / 100 * gameWidth;
         button_container_option_2.getChildAt(i).height = 5 / 100 * gameHeight;
-        if (i !== 2) {
+        if (i < 2) {
             button_container_option_2.getChildAt(i).texture = TextureCache['empty'];
-        } else {
+        } else if (i === 2){
             button_container_option_2.getChildAt(i).texture = TextureCache['theme1'];
-        }
-    }
+        } else {
+			button_container_option_2.getChildAt(i).texture = TextureCache['easy'];
+		}
+	}
     
     VMFrame.x = VMLess.x + 1.5 * VMLess.width;
     VMFrame.y = VMDesc.y;
@@ -448,7 +467,11 @@ function initMenu() {
     themeFrame.x = themeLeft.x + 1.5 * themeLeft.width;
     themeFrame.y = themeLeft.y;
     themeRight.x = themeFrame.x + themeFrame.width + .5 * themeLeft.width;
-
+	
+	difficultyFrame.x = difficultyLeft.x + 1.5 * difficultyLeft.width;
+	difficultyFrame.y = difficultyLeft.y;
+	difficultyRight.x = difficultyFrame.x + difficultyFrame.width + .5 * difficultyLeft.width;
+	
     VMText.x = (VMFrame.x + VMFrame.width / 2) - VMText.width / 2.5;
     VMText.y = (VMDesc.y + VMDesc.height / 2) - VMText.height / 2.5;
 
@@ -534,10 +557,10 @@ function initMenu() {
         }else{
             themeSel--;
         }
-        option();
         setTimeout(function () {
             themeLeft.texture = TextureCache['left'];
         }, 100);
+		option();
     });
     themeRight.on("click", function () {
         themeRight.texture = TextureCache['right hover'];
@@ -546,12 +569,36 @@ function initMenu() {
         }else{
             themeSel++;
         }
-        option();
         setTimeout(function () {
             themeRight.texture = TextureCache['right'];
         }, 100);
+		option();
     });
-    
+	
+    difficultyLeft.on("click", function () {
+        difficultyLeft.texture = TextureCache['left hover'];
+        if(themeSel === 0){ 
+            difficultySel = difficulties.length - 1;
+        }else{
+            difficultySel--;
+        }
+        setTimeout(function () {
+            difficultyLeft.texture = TextureCache['left'];
+        }, 100);
+		option();
+    });
+    difficultyRight.on("click", function () {
+        difficultyRight.texture = TextureCache['right hover'];
+        if(difficultySel === difficulties.length - 1){ 
+            difficultySel = 0;
+        }else{
+            difficultySel++;
+        }
+        setTimeout(function () {
+            difficultyRight.texture = TextureCache['right'];
+        }, 100);
+		option();
+    });
 }
 //Tout le code du menu principal est placé ici
 function menu() {
@@ -575,9 +622,31 @@ function option() {
 		case 1:
 			bg.texture = TextureCache['bg 2'];
 			break;
+	}
+	difficultyFrame.texture = difficulties[difficultySel];
+	switch(difficultySel){
+		case 0:
+			difficultyFrame.texture = TextureCache['easy'];
+			difficulty = "facile";
+			break;
+		case 1:
+			difficultyFrame.texture = TextureCache['medium'];
+			difficulty = "moyen";
+			break;
+		case 2:
+			difficultyFrame.texture = TextureCache['hard'];
+			difficulty = "difficile";
+			break;
+		case 3:
+			difficultyFrame.texture = TextureCache['very hard'];
+			difficulty = "très difficile";
+			break;
+		case 4:
+			difficultyFrame.texture = TextureCache['extreme'];
+			difficulty = "extreme";
+			break;
 	}			
-}
-
+}		
 function initPlay() {
 
     //Création des sprites du jeu
@@ -695,8 +764,8 @@ function play() {
     }
     //boost
     if (keys[66]) {
-        ship.scale.set(0.1, 0.1);
-        vel += 2;
+        ship.scale.set(0.3, 0.3);
+        vel += 1.5;
         bulletSpeed = 20;
     } else if (keys[66] === false) {
         ship.scale.set(0.18, 0.18);
