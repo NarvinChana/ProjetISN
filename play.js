@@ -22,11 +22,10 @@ var app = new Application({
 
 document.getElementById("jeu").appendChild(app.view);
 
-
 //variables qui seront utilisées dans plusieurs fonctions
 var state;
 var introScene, menuScene, gameScene, optionScene;
-var buttons_texture = [], themes = [];
+var buttons_texture = [], themes = [], difficulties = [];
 var themeSel = 0;
 var play, play_button, options_button, quit_button, back_button;
 var button_container, showName;
@@ -84,8 +83,8 @@ function preloading() {
 
     load_container = new Container();
     load_container.addChild(loaded, unloaded, loadFrame);
-    app.stage.addChild(load_container, bg, title);
-
+    app.stage.addChild(bg, title, load_container,);
+	
 
     //lancement du chargement des ressources du jeu et des menus
     //après le preloading 
@@ -102,6 +101,23 @@ function load() {
         .add('options hover button', "lib/main menu/buttons/options_hover.png")
         .add('quit button', "lib/main menu/buttons/quit.png")
         .add('quit hover button', "lib/main menu/buttons/quit_hover.png")
+		//boutons options
+        .add('option frame', "lib/main menu/buttons/option_frame.png")
+        .add('valid', "lib/main menu/textInput/valid.png")
+        .add('invalid', "lib/main menu/textInput/invalid.png")
+        .add('less', "lib/main menu/buttons/button_less.png")
+        .add('less hover', "lib/main menu/buttons/button_less_hover.png")
+        .add('plus', "lib/main menu/buttons/button_plus.png")
+        .add('plus hover', "lib/main menu/buttons/button_plus_hover.png")
+        .add('left', "lib/main menu/buttons/button_left.png")
+        .add('left hover', "lib/main menu/buttons/button_left_hover.png")
+        .add('right', "lib/main menu/buttons/button_right.png")
+        .add('right hover', "lib/main menu/buttons/button_right_hover.png")
+        .add('back', "lib/main menu/buttons/back.png")
+        .add('back hover', "lib/main menu/buttons/back_hover.png")
+        .add('empty', "lib/main menu/buttons/button_empty.png")
+        .add('theme1', "lib/main menu/buttons/theme_orangespace.png")
+        .add('theme2', "lib/main menu/buttons/theme_darkspace.png")
         //vaisseaux
         .add('player ship', "lib/ships/player_ship.png")
         .add('enemy ship', "lib/ships/enemy_ship.png")
@@ -119,27 +135,10 @@ function load() {
         .add('hard', "lib/main menu/buttons/hard.png")
         .add('very hard', "lib/main menu/buttons/veryhard.png")
         .add('extreme', "lib/main menu/buttons/extreme.png")
-        //boutons options
-        .add('option frame', "lib/main menu/buttons/optionFrame.png")
-        //.add('option title', "lib/main menu/optionTitle.png")
-        .add('valid', "lib/main menu/textInput/valid.png")
-        .add('invalid', "lib/main menu/textInput/invalid.png")
-        .add('less', "lib/main menu/buttons/button_less.png")
-        .add('less hover', "lib/main menu/buttons/button_less_hover.png")
-        .add('plus', "lib/main menu/buttons/button_plus.png")
-        .add('plus hover', "lib/main menu/buttons/button_plus_hover.png")
-        .add('left', "lib/main menu/buttons/button_left.png")
-        .add('left hover', "lib/main menu/buttons/button_left_hover.png")
-        .add('right', "lib/main menu/buttons/button_right.png")
-        .add('right hover', "lib/main menu/buttons/button_right_hover.png")
-        .add('back', "lib/main menu/buttons/back.png")
-        .add('back hover', "lib/main menu/buttons/back_hover.png")
-        .add('empty', "lib/main menu/buttons/button_empty.png")
-        .add('theme1', "lib/main menu/buttons/theme_orangespace.png")
-        .add('theme2', "lib/main menu/buttons/theme_darkspace.png")
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
+			document.getElementById("textbox").style.display = "block";
         })
         .load(setup);
 }
@@ -151,7 +150,16 @@ function loadProgressHandler(loader, resource) {
     var a = (loader.progress / 100) * unloaded.width;
     unloaded.width = unloaded.width - a;
     unloaded.x += a;
+	sleep(100);
 }
+
+function sleep(miliseconds) {
+   var currentTime = new Date().getTime();
+
+   while (currentTime + miliseconds >= new Date().getTime()) {
+   }
+}
+
 //Initialisation des images, textures et containers
 function setup() {
 
@@ -287,8 +295,8 @@ function initMenu() {
     quit_button.on("click", function () {
         location.reload();
     })
-
-    document.getElementById("menuMusic").play();
+	menuMusic.volume = 0.5;
+    menuMusic.play();
 
     // OPTION MENU INITIALISATION /!\ ==============================================================
 
@@ -304,21 +312,27 @@ function initMenu() {
     themeFrame = new Sprite;
     themeLeft = new Sprite();
     themeRight = new Sprite();
-
+	difficultyLeft = new Sprite();
+	difficultyRight = new Sprite();
+	difficultyFrame = new Sprite();
+	
     themes = [
         TextureCache["lib/main menu/buttons/theme_orangespace.png"],
-        TextureCache["lib/main menu/buttons/theme_darkspace.png"]/*,
-        TextureCache["lib/main menu/buttons/easy.png"],
+        TextureCache["lib/main menu/buttons/theme_darkspace.png"]
+    ]
+	
+    difficulties = [
+		TextureCache["lib/main menu/buttons/easy.png"],
         TextureCache["lib/main menu/buttons/medium.png"],
         TextureCache["lib/main menu/buttons/hard.png"],
         TextureCache["lib/main menu/buttons/veryhard.png"],
-        TextureCache["lib/main menu/buttons/extreme.png"],*/
-    ]
-    
+        TextureCache["lib/main menu/buttons/extreme.png"]
+	]	
+	
     button_container_option = new Container();
     button_container_option.addChild(VMLess, VELess, VMMore, VEMore, VMFrame, VEFrame, themeLeft, themeRight);
     button_container_option_2 = new Container();
-    button_container_option_2.addChild(VMFrame, VEFrame, themeFrame);
+    button_container_option_2.addChild(VMFrame, VEFrame, themeFrame, difficultyLeft, difficultyRight, difficultyFrame);
 
     //sprites
     optionFrame.texture = TextureCache['option frame'];
@@ -368,7 +382,13 @@ function initMenu() {
         fontSize: 40,
         fill: 'black'
     });
-
+	
+	difficultyDesc = new Text("Difficulté ", {
+        fontFamily: 'PixelOperator',
+        fontSize: 40,
+        fill: 'black'
+    });
+	
     //position
     VMDesc.x = gameWidth * 23 / 100;
     VMDesc.y = 35 / 100 * gameHeight;
@@ -379,6 +399,9 @@ function initMenu() {
     themeDesc.x = gameWidth * 23 / 100;
     themeDesc.y = 55 / 100 * gameHeight;
 
+	difficultyDesc.x = gameWidth * 23 / 100;
+    difficultyDesc.y = 65 / 100 * gameHeight;
+	
     for (var i = 0; i < 6; i++) {
         button_container_option.getChildAt(i).interactive = true;
         button_container_option.getChildAt(i).width = 5 / 100 * gameHeight;
@@ -447,6 +470,7 @@ function initMenu() {
         VMDesc,
         VEDesc,
         themeDesc,
+		difficultyDesc,
         button_container_option,
         button_container_option_2,
         VMText,
@@ -544,7 +568,14 @@ function option() {
     VEText.text = volumeEffect + "%";
     
     themeFrame.texture = themes[themeSel];
-
+	switch(themeSel){
+		case 0:
+			bg.texture = TextureCache['bg 1'];
+			break;
+		case 1:
+			bg.texture = TextureCache['bg 2'];
+			break;
+	}			
 }
 
 function initPlay() {
