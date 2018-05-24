@@ -825,10 +825,11 @@ function play() {
         fill: 'black'
     };
     hbEmpty.height = (100 - healthPercent) / 100 * hbFill.height;
-    if (healthPercent == 0) {
+    if (healthPercent <= 0) {
         gameScene.visible = false;
         menuScene.visible = true;
         title.visible = true;
+		resetGame();
         document.getElementById("gameMusic1").pause;
         document.getElementById("gameMusic1").setTime
     }
@@ -950,6 +951,31 @@ function createEnemy() {
     enemyShips.push(enemyShip);
 }
 
+function resetGame() {
+	
+
+	for (var b = bullets.length - 1; b >= 0; b--) {
+		bullets[b].visible = false;					
+		gameScene.removeChild(bullets[b]);
+	}			
+	for (var c = enemyBullets.length - 1; c >= 0; c--) {
+		enemyBullets[c].visible = false;
+		gameScene.removeChild(enemyBullets[c]);
+	}			
+	for (var d = enemyShips.length - 1; d >= 0; d--) {
+		enemyShips[d].visible = false;					
+		gameScene.removeChild(enemyShips[d]);
+	}			
+		
+    bullets.length = 0;
+    enemyBullets.length = 0;
+    enemyShips.length = 0;
+	
+	gameScene.removeChild(ship, hbFill, hbEmpty, hbFrame, hbPercent, score);
+
+
+}
+
 function hitTestRectangle(r1, r2) {
 
     //Define the variables we'll need to calculate
@@ -999,4 +1025,4 @@ function hitTestRectangle(r1, r2) {
 
     //`hit` will be either `true` or `false`
     return hit;
-};
+}
