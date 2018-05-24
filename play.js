@@ -832,6 +832,7 @@ function play() {
 		resetGame();
         document.getElementById("gameMusic1").pause;
         document.getElementById("gameMusic1").setTime
+		document.getElementById("menuMusic").play;
     }
 
 
@@ -848,22 +849,22 @@ function play() {
             }
             break;
         case "moyen":
-            if (c >= 0.7 && enemyShips.length < 20) {
+            if (c >= 0.98 && enemyShips.length < 20) {
                 createEnemy();
             }
             break;
         case "difficile":
-            if (c >= 0.5 && enemyShips.length < 25) {
+            if (c >= 0.97 && enemyShips.length < 25) {
                 createEnemy();
             }
             break;
         case "très difficile":
-            if (c >= 0.3 && enemyShips.length < 30) {
+            if (c >= 0.96 && enemyShips.length < 30) {
                 createEnemy();
             }
             break;
         case "extreme":
-            if (c >= 0.05 && enemyShips.length < 40) {
+            if (c >= 0.95 && enemyShips.length < 40) {
                 createEnemy();
             }
             break;
