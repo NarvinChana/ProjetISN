@@ -38,8 +38,10 @@ var bg, title;
 var menuMusic = document.getElementById("menuMusic");
 var difficulty = "facile";
 var volumeMusic = 50,
-    volumeEffect = 50;
-app.renderer.autoResize = true;
+    volumeEffect = 50,
+	fontDesc = gameHeight/25,
+	fontIntro = gameHeight/12.5;
+	app.renderer.autoResize = true;
 
 //chargement des images de base pour affficher l'écran de chargement
 loader
@@ -62,7 +64,7 @@ function preloading() {
     //préchargement de l'image du titre
     title = new Sprite(TextureCache["lib/main menu/title.png"]);
     title.width = gameWidth * 70 / 100;
-    title.height = gameHeight * 20 / 100;
+    title.height = title.width * 20 / 100;
     title.x = gameWidth / 2 - title.width / 2;
     title.y = 7 / 100 * gameHeight;
 
@@ -141,6 +143,8 @@ function load() {
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
+			document.getElementById("textbox").style.marginLeft = gameWidth/2 - document.getElementById("textbox").width*2 ;
+			document.getElementById("inputbox").style.marginLeft = gameWidth/2 - document.getElementById("inputbox").width*2 ;
             document.getElementById("textbox").style.display = "block";
         })
         .load(setup);
@@ -164,12 +168,12 @@ function sleep(miliseconds) {
 
 //Initialisation des images, textures et containers
 function setup() {
-
+	
     introScene = new Container();
 
     text = new Text('Bienvenue ! Entrez votre pseudo :', {
         fontFamily: 'PixelOperator',
-        fontSize: 60,
+        fontSize: fontIntro,
         fill: 'black'
     });
 
@@ -180,7 +184,7 @@ function setup() {
     button_container = new Container();
     showName = new Text(profileName, {
         fontFamily: 'PixelOperator',
-        fontSize: 60,
+        fontSize: fontIntro,
         fill: 'black'
     });
     optionScene = new Container();
@@ -234,8 +238,8 @@ function initMenu() {
 
     for (var i = 0; i < 3; i++) {
         button_container.getChildAt(i).texture = buttons_texture[i * 2];
-        button_container.getChildAt(i).width = gameWidth * 40 / 100;
-        button_container.getChildAt(i).height = gameHeight * 15 / 100;
+        button_container.getChildAt(i).width = gameWidth * 45 / 100;
+        button_container.getChildAt(i).height = button_container.getChildAt(i).width * 25/100;
         button_container.getChildAt(i).x = gameWidth / 2 - button_container.getChildAt(i).width / 2;
         button_container.getChildAt(i).y = gameHeight * 45 / 100 + button_container.getChildAt(i).height * i;
         button_container.getChildAt(i).interactive = true;
@@ -358,9 +362,9 @@ function initMenu() {
     optionFrame.y = 30 / 100 * gameHeight;
 
     optionTitle.texture = TextureCache['options button'];
-    optionTitle.width = gameWidth * 40 / 100;
+    optionTitle.width = gameWidth * 45 / 100;
     optionTitle.height = gameHeight * 20 / 100;
-    optionTitle.x = gameWidth * 30 / 100;
+    optionTitle.x = gameWidth/2 - optionTitle.width/2;
     optionTitle.y = 5 / 100 * gameHeight;
 
     back_button.texture = TextureCache['back'];
@@ -373,64 +377,64 @@ function initMenu() {
     //description
     VMDesc = new Text("Volume Musique ", {
         fontFamily: 'PixelOperator',
-        fontSize: 40,
+        fontSize: fontDesc,
         fill: 'black'
     });
     VMText = new Text(volumeMusic + "%", {
         fontFamily: 'PixelOperator',
-        fontSize: 40,
+        fontSize: fontDesc,
         fill: 'black'
     });
 
     VEDesc = new Text("Volume Effets ", {
         fontFamily: 'PixelOperator',
-        fontSize: 40,
+        fontSize: fontDesc,
         fill: 'black'
     });
     VEText = new Text(volumeEffect + "%", {
         fontFamily: 'PixelOperator',
-        fontSize: 40,
+        fontSize: fontDesc,
         fill: 'black'
     });
 
     themeDesc = new Text("Thème ", {
         fontFamily: 'PixelOperator',
-        fontSize: 40,
+        fontSize: fontDesc,
         fill: 'black'
     });
 
     difficultyDesc = new Text("Difficulté ", {
         fontFamily: 'PixelOperator',
-        fontSize: 40,
+        fontSize: fontDesc,
         fill: 'black'
     });
 
     //position
-    VMDesc.x = gameWidth * 23 / 100;
-    VMDesc.y = 35 / 100 * gameHeight;
+    VMDesc.x = optionFrame.x + optionFrame.width * 7.5 / 100;
+    VMDesc.y = optionFrame.y + optionFrame.height/5 - fontDesc/2;
 
-    VEDesc.x = gameWidth * 23 / 100;
-    VEDesc.y = 45 / 100 * gameHeight;
+    VEDesc.x = optionFrame.x + optionFrame.width * 7.5 / 100;
+    VEDesc.y = optionFrame.y + optionFrame.height/5 * 2 - fontDesc/2;
 
-    themeDesc.x = gameWidth * 23 / 100;
-    themeDesc.y = 55 / 100 * gameHeight;
+    themeDesc.x = optionFrame.x + optionFrame.width * 7.5 / 100;
+    themeDesc.y = optionFrame.y + optionFrame.height/5 * 3 - fontDesc/2;
 
-    difficultyDesc.x = gameWidth * 23 / 100;
-    difficultyDesc.y = 65 / 100 * gameHeight;
+    difficultyDesc.x = optionFrame.x + optionFrame.width * 7.5 / 100;
+    difficultyDesc.y = optionFrame.y + optionFrame.height/5 * 4 - fontDesc/2;
 
     for (var i = 0; i < 8; i++) {
         button_container_option.getChildAt(i).interactive = true;
-        button_container_option.getChildAt(i).width = 5 / 100 * gameHeight;
-        button_container_option.getChildAt(i).height = 5 / 100 * gameHeight;
+        button_container_option.getChildAt(i).width = 1/3 * 1/7.5 * optionFrame.width;
+        button_container_option.getChildAt(i).height = 1/3 * 1/7.5 * optionFrame.width;
 
         if (i === 0 || i === 1) {
             button_container_option.getChildAt(i).texture = TextureCache['less'];
-            button_container_option.getChildAt(i).x = optionFrame.x + 2 / 3 * optionFrame.width;
+            button_container_option.getChildAt(i).x = optionFrame.x + optionFrame.width * 2/3;
         } else if (i === 2 || i === 3) {
             button_container_option.getChildAt(i).texture = TextureCache['plus'];
         } else if (i === 4 || i === 6) {
             button_container_option.getChildAt(i).texture = TextureCache['left'];
-            button_container_option.getChildAt(i).x = optionFrame.x + 2 / 3 * optionFrame.width;
+            button_container_option.getChildAt(i).x = optionFrame.x + 2/3 * optionFrame.width;
         } else {
             button_container_option.getChildAt(i).texture = TextureCache['right'];
         }
@@ -447,8 +451,8 @@ function initMenu() {
     }
 
     for (var i = 0; i < 4; i++) {
-        button_container_option_2.getChildAt(i).width = 10 / 100 * gameWidth;
-        button_container_option_2.getChildAt(i).height = 5 / 100 * gameHeight;
+        button_container_option_2.getChildAt(i).width = 1/3 * 2/5 * optionFrame.width;
+        button_container_option_2.getChildAt(i).height = 1/3 * 1/7.5 * optionFrame.width;
         if (i < 2) {
             button_container_option_2.getChildAt(i).texture = TextureCache['empty'];
         } else if (i === 2) {
@@ -475,10 +479,10 @@ function initMenu() {
     difficultyRight.x = difficultyFrame.x + difficultyFrame.width + .5 * difficultyLeft.width;
 
     VMText.x = (VMFrame.x + VMFrame.width / 2) - VMText.width / 2.5;
-    VMText.y = (VMDesc.y + VMDesc.height / 2) - VMText.height / 2.5;
+    VMText.y = (VMDesc.y + VMDesc.height / 2) - fontDesc / 2.5;
 
     VEText.x = (VEFrame.x + VEFrame.width / 2) - VEText.width / 2.5;
-    VEText.y = (VEDesc.y + VEDesc.height / 2) - VEText.height / 2.5;
+    VEText.y = (VEDesc.y + VEDesc.height / 2) - fontDesc / 2.5;
 
     //event when hover
     back_button.on('mouseover', function () {
@@ -825,14 +829,12 @@ function play() {
         fill: 'black'
     };
     hbEmpty.height = (100 - healthPercent) / 100 * hbFill.height;
-    if (healthPercent <= 0) {
+    if (healthPercent == 0) {
         gameScene.visible = false;
         menuScene.visible = true;
         title.visible = true;
-		resetGame();
         document.getElementById("gameMusic1").pause;
         document.getElementById("gameMusic1").setTime
-		document.getElementById("menuMusic").play;
     }
 
 
@@ -849,22 +851,22 @@ function play() {
             }
             break;
         case "moyen":
-            if (c >= 0.98 && enemyShips.length < 20) {
+            if (c >= 0.7 && enemyShips.length < 20) {
                 createEnemy();
             }
             break;
         case "difficile":
-            if (c >= 0.97 && enemyShips.length < 25) {
+            if (c >= 0.5 && enemyShips.length < 25) {
                 createEnemy();
             }
             break;
         case "très difficile":
-            if (c >= 0.96 && enemyShips.length < 30) {
+            if (c >= 0.3 && enemyShips.length < 30) {
                 createEnemy();
             }
             break;
         case "extreme":
-            if (c >= 0.95 && enemyShips.length < 40) {
+            if (c >= 0.05 && enemyShips.length < 40) {
                 createEnemy();
             }
             break;
@@ -952,31 +954,6 @@ function createEnemy() {
     enemyShips.push(enemyShip);
 }
 
-function resetGame() {
-	
-
-	for (var b = bullets.length - 1; b >= 0; b--) {
-		bullets[b].visible = false;					
-		gameScene.removeChild(bullets[b]);
-	}			
-	for (var c = enemyBullets.length - 1; c >= 0; c--) {
-		enemyBullets[c].visible = false;
-		gameScene.removeChild(enemyBullets[c]);
-	}			
-	for (var d = enemyShips.length - 1; d >= 0; d--) {
-		enemyShips[d].visible = false;					
-		gameScene.removeChild(enemyShips[d]);
-	}			
-		
-    bullets.length = 0;
-    enemyBullets.length = 0;
-    enemyShips.length = 0;
-	
-	gameScene.removeChild(ship, hbFill, hbEmpty, hbFrame, hbPercent, score);
-
-
-}
-
 function hitTestRectangle(r1, r2) {
 
     //Define the variables we'll need to calculate
@@ -1026,4 +1003,4 @@ function hitTestRectangle(r1, r2) {
 
     //`hit` will be either `true` or `false`
     return hit;
-}
+};
