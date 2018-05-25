@@ -64,7 +64,7 @@ function preloading() {
     //préchargement de l'image du titre
     title = new Sprite(TextureCache["lib/main menu/title.png"]);
     title.width = gameWidth * 70 / 100;
-    title.height = title.width * 20 / 100;
+    title.height = title.width * 15 / 100;
     title.x = gameWidth / 2 - title.width / 2;
     title.y = 7 / 100 * gameHeight;
 
@@ -143,8 +143,8 @@ function load() {
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
-			document.getElementById("textbox").style.marginLeft = gameWidth/2 - document.getElementById("textbox").width*2 ;
-			document.getElementById("inputbox").style.marginLeft = gameWidth/2 - document.getElementById("inputbox").width*2 ;
+			document.getElementById("textbox").style.left = gameWidth/4;
+			document.getElementById("textbox").style.top = gameHeight/2;
             document.getElementById("textbox").style.display = "block";
         })
         .load(setup);
@@ -227,7 +227,8 @@ function initMenu() {
         TextureCache["lib/main menu/buttons/quit_hover.png"]
     ]
 
-    text.position.set(gameWidth / 2 - text.width / 2, gameHeight * 33 / 100);
+    //text.position.set(gameWidth / 2 - text.width / 2, gameHeight * 33 / 100);
+	text.position.set(gameWidth / 2 - text.width / 2, gameHeight/2 - gameHeight * 15 / 100);
     introScene.addChild(text);
     app.stage.addChild(introScene);
 
@@ -239,7 +240,7 @@ function initMenu() {
     for (var i = 0; i < 3; i++) {
         button_container.getChildAt(i).texture = buttons_texture[i * 2];
         button_container.getChildAt(i).width = gameWidth * 45 / 100;
-        button_container.getChildAt(i).height = button_container.getChildAt(i).width * 25/100;
+        button_container.getChildAt(i).height = gameHeight * 17 / 100;
         button_container.getChildAt(i).x = gameWidth / 2 - button_container.getChildAt(i).width / 2;
         button_container.getChildAt(i).y = gameHeight * 45 / 100 + button_container.getChildAt(i).height * i;
         button_container.getChildAt(i).interactive = true;
