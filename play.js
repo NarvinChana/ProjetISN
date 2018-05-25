@@ -39,9 +39,11 @@ var menuMusic = document.getElementById("menuMusic");
 var difficulty = "facile";
 var volumeMusic = 50,
     volumeEffect = 50,
-	fontDesc = gameHeight/25,
+	fontDesc = gameHeight/25, 
 	fontIntro = gameHeight/12.5;
 	app.renderer.autoResize = true;
+	//document.getElementById("textbox").style.width = gameWidth/2;
+//var textBoxWidth = document.getElementById("textbox").style.width;	
 
 //chargement des images de base pour affficher l'écran de chargement
 loader
@@ -143,8 +145,8 @@ function load() {
         .on("progress", loadProgressHandler)
         .on('complete', function (e) {
             load_container.visible = false;
-			document.getElementById("textbox").style.left = gameWidth/4;
-			document.getElementById("textbox").style.top = gameHeight/2;
+			//document.getElementById("textbox").style.left = gameWidth/2 - textBoxWidth/2;
+			//document.getElementById("textbox").style.top = gameHeight/2;
             document.getElementById("textbox").style.display = "block";
         })
         .load(setup);
@@ -357,9 +359,9 @@ function initMenu() {
 
     //sprites
     optionFrame.texture = TextureCache['option frame'];
-    optionFrame.width = gameWidth * 75 / 100;
+    optionFrame.width = gameWidth * 60 / 100;
     optionFrame.height = gameHeight * 50 / 100;
-    optionFrame.x = gameWidth * 12.5 / 100;
+    optionFrame.x = gameWidth/2 - optionFrame.width/2;
     optionFrame.y = 30 / 100 * gameHeight;
 
     optionTitle.texture = TextureCache['options button'];
@@ -375,24 +377,16 @@ function initMenu() {
     back_button.y = gameHeight * 84 / 100;
     back_button.interactive = true;
 
+	fontDesc = optionFrame.height/8;
+	
     //description
     VMDesc = new Text("Volume Musique ", {
         fontFamily: 'PixelOperator',
         fontSize: fontDesc,
         fill: 'black'
     });
-    VMText = new Text(volumeMusic + "%", {
-        fontFamily: 'PixelOperator',
-        fontSize: fontDesc,
-        fill: 'black'
-    });
 
     VEDesc = new Text("Volume Effets ", {
-        fontFamily: 'PixelOperator',
-        fontSize: fontDesc,
-        fill: 'black'
-    });
-    VEText = new Text(volumeEffect + "%", {
         fontFamily: 'PixelOperator',
         fontSize: fontDesc,
         fill: 'black'
@@ -479,11 +473,7 @@ function initMenu() {
     difficultyFrame.y = difficultyLeft.y;
     difficultyRight.x = difficultyFrame.x + difficultyFrame.width + .5 * difficultyLeft.width;
 
-    VMText.x = (VMFrame.x + VMFrame.width / 2) - VMText.width / 2.5;
-    VMText.y = (VMDesc.y + VMDesc.height / 2) - fontDesc / 2.5;
-
-    VEText.x = (VEFrame.x + VEFrame.width / 2) - VEText.width / 2.5;
-    VEText.y = (VEDesc.y + VEDesc.height / 2) - fontDesc / 2.5;
+    
 
     //event when hover
     back_button.on('mouseover', function () {
@@ -492,7 +482,24 @@ function initMenu() {
     back_button.on('mouseout', function () {
         back_button.texture = TextureCache['back'];
     });
+	//pourcentage
+	VMText = new Text(volumeMusic + "%", {
+        fontFamily: 'PixelOperator',
+        fontSize: VMFrame.height,
+        fill: 'black'
+    });
+	VEText = new Text(volumeEffect + "%", {
+        fontFamily: 'PixelOperator',
+        fontSize: VEFrame.height,
+        fill: 'black'
+    });
+	
+	VMText.x = (VMFrame.x + VMFrame.width / 2) - VMText.width / 2;
+    VMText.y = (VMFrame.y + VMFrame.height / 2) - VMFrame.height / 2;
 
+    VEText.x = (VEFrame.x + VEFrame.width / 2) - VEText.width / 2;
+    VEText.y = (VEFrame.y + VEFrame.height / 2) - VEFrame.height / 2;
+	
     optionScene.addChild(
         back_button,
         optionFrame,
@@ -509,6 +516,7 @@ function initMenu() {
     app.stage.addChild(optionScene);
     optionScene.visible = false;
 
+	
     //triggers
     back_button.on("click", function () {
         optionScene.visible = false;
@@ -618,11 +626,29 @@ function menu() {
 
 
 function option() {
+	
+	//update volume
     menuMusic.volume = volumeMusic / 100;
+
+	//      	effect volume
+	//
+	//	INSERER LES SONS EXPLOSIONS	/ LASERS
+	//
+	//			
+
+	//update %
     VMText.text = volumeMusic + "%";
     VEText.text = volumeEffect + "%";
+	
+	//update text pos
+	VMText.x = (VMFrame.x + VMFrame.width / 2) - VMText.width / 2;
+    VMText.y = (VMFrame.y + VMFrame.height / 2) - VMFrame.height / 2;
 
+    VEText.x = (VEFrame.x + VEFrame.width / 2) - VEText.width / 2;
+    VEText.y = (VEFrame.y + VEFrame.height / 2) - VEFrame.height / 2;
+	
     themeFrame.texture = themes[themeSel];
+	
     switch (themeSel) {
         case 0:
             bg.texture = TextureCache['bg 1'];
@@ -632,6 +658,7 @@ function option() {
             break;
     }
     difficultyFrame.texture = difficulties[difficultySel];
+	
     switch (difficultySel) {
         case 0:
             difficultyFrame.texture = TextureCache['easy'];
@@ -649,11 +676,12 @@ function option() {
             difficultyFrame.texture = TextureCache['very hard'];
             difficulty = "très difficile";
             break;
-            /*case 4:
-            	difficultyFrame.texture = TextureCache['extreme'];
-            	difficulty = "extreme";
-            	break;*/
+        case 4:
+			difficultyFrame.texture = TextureCache['extreme'];
+			difficulty = "extreme";
+            break;
     }
+	
 }
 
 function initPlay() {
