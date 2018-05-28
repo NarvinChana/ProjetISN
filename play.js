@@ -799,15 +799,10 @@ function play() {
             PIXI.sound.play('pew1');
         }
     }
-    //boost
-    if (keys[66]) {
-        ship.scale.set(0.3, 0.3);
-        vel += 1.5;
-        bulletSpeed = 20;
-    } else if (keys[66] === false) {
-        ship.scale.set(0.18, 0.18);
-        bulletSpeed = 15;
-    }
+    //escape
+    if (keys[27]) {
+      
+    } 
 
     //application d'un réduction de mouvement
     vel *= friction;
