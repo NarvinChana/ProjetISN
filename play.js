@@ -191,7 +191,7 @@ function setup() {
     });
     optionScene = new Container();
     menuScene = new Container();
-    gameScene = new Container();
+    
 
     state = "menu";
 
@@ -288,10 +288,10 @@ function initMenu() {
     play_button.on("click", function () {
         menuScene.visible = false;
         title.visible = false;
-        gameScene.visible = true;
         document.getElementById("menuMusic").pause();
         document.getElementById("menuMusic").currentTime = 0;
         initPlay();
+		gameScene.visible = true;
         state = "play";
     })
     options_button.on("click", function () {
@@ -685,7 +685,9 @@ function option() {
 }
 
 function initPlay() {
-
+	
+	gameScene = new Container();
+	
     //Création des sprites du jeu
     ship = new Sprite();
     ship.texture = TextureCache['player ship'];
@@ -768,6 +770,27 @@ function initPlay() {
 }
 
 //Tout le code du jeu est placé ici
+function resetGame() {
+	
+	for (var b = bullets.length - 1; b >= 0; b--) {
+		bullets[b].visible = false;					
+		gameScene.removeChild(bullets[b]);
+	}			
+	for (var c = enemyBullets.length - 1; c >= 0; c--) {
+		enemyBullets[c].visible = false;
+		gameScene.removeChild(enemyBullets[c]);
+	}			
+	for (var d = enemyShips.length - 1; d >= 0; d--) {
+		enemyShips[d].visible = false;					
+		gameScene.removeChild(enemyShips[d]);
+	}			
+    bullets.length = 0;
+    enemyBullets.length = 0;
+    enemyShips.length = 0;
+	
+	gameScene.removeChild(ship, hbFill, hbEmpty, hbFrame, hbPercent, score);
+	gameScene.parent.removeChild(gameScene);
+}
 function play() {
 
     var c = Math.random();
@@ -799,10 +822,6 @@ function play() {
             PIXI.sound.play('pew1');
         }
     }
-    //escape
-    if (keys[27]) {
-      
-    } 
 
     //application d'un réduction de mouvement
     vel *= friction;
@@ -853,8 +872,10 @@ function play() {
         fill: 'black'
     };
     hbEmpty.height = (100 - healthPercent) / 100 * hbFill.height;
-    if (healthPercent == 0) {
-        gameScene.visible = false;
+    if (healthPercent <= 0 || keys[27]) {
+		state = "menu";
+		resetGame();
+		gameScene.visible = false;
         menuScene.visible = true;
         title.visible = true;
         document.getElementById("gameMusic1").pause;
@@ -875,22 +896,22 @@ function play() {
             }
             break;
         case "moyen":
-            if (c >= 0.7 && enemyShips.length < 20) {
+            if (c >= 0.98 && enemyShips.length < 20) {
                 createEnemy();
             }
             break;
         case "difficile":
-            if (c >= 0.5 && enemyShips.length < 25) {
+            if (c >= 0.97 && enemyShips.length < 25) {
                 createEnemy();
             }
             break;
         case "très difficile":
-            if (c >= 0.3 && enemyShips.length < 30) {
+            if (c >= 0.96 && enemyShips.length < 30) {
                 createEnemy();
             }
             break;
         case "extreme":
-            if (c >= 0.05 && enemyShips.length < 40) {
+            if (c >= 0.95 && enemyShips.length < 40) {
                 createEnemy();
             }
             break;
